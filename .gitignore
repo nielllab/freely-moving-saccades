@@ -143,4 +143,5 @@ dmypy.json
 .idea/vcs.xml
 .idea/workspace.xml
 
-.png
+*.png
+*.pdf
