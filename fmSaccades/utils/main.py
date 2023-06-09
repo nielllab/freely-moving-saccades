@@ -104,44 +104,8 @@ def psth_modind(psth, baseval='range'):
     mod = np.max(np.abs(use[1000:1250]))
     return mod
 
-def plot_tempseq(panel, tseq, return_img=False, freev=None):
-    panel.set_xlabel('time (msec)')
-    panel.set_ylim([np.size(tseq,0),0])
-    vmin = -0.75; vmax = 0.75
-    if freev is not None:
-        vmin = -freev
-        vmax = freev
-    img = panel.imshow(tseq, cmap='coolwarm', vmin=vmin, vmax=vmax)
-    panel.set_xlim([800,1400])
-    panel.set_xticks(np.linspace(800,1400,4), labels=np.linspace(-200,400,4).astype(int))
-    panel.vlines(1000, 0, np.size(tseq,0), color='k', linestyle='dashed', linewidth=1)
-    if return_img:
-        return img
 
-def plot_cprop_scatter(panel, data, prop_name, use_median=False):
-    for c, cluster in enumerate(['early','late','biphasic','negative']):
-        cluster_data = data[prop_name][data['gazecluster']==cluster]
-        x_jitter = np.random.uniform(c-0.2, c+0.2, np.size(cluster_data,0))
-        panel.plot(x_jitter, cluster_data, '.', color=colors[cluster], markersize=2)
-        if use_median:
-            hline = np.nanmedian(cluster_data)
-        elif not use_median:
-            hline = np.nanmean(cluster_data)
-        panel.hlines(hline, c-0.2, c+0.2, color='k', linewidth=2)
-        err = np.std(cluster_data) / np.sqrt(np.size(cluster_data))
-        panel.vlines(c, hline-err, hline+err, color='k', linewidth=2)
-        panel.set_xticks(range(4), ['early','late','biphasic','negative'])
 
-def jitter_ax(center, size):
-    return np.ones(size)+np.random.uniform(center-0.2, center+0.2, size)
-
-def drop_nan_along(x, axis=1):
-    # axis=1 will drop along columns (i.e. any rows with NaNs will be dropped)
-    x = x[~np.isnan(x).any(axis=axis)]
-    return x
-
-def to_color(r,g,b):
-    return (r/255, g/255, b/255)
 
 def normalize_psth(psth, raw_pref=None, baseline_val=None):
     if raw_pref is None:
