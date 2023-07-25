@@ -4,15 +4,7 @@ import pandas as pd
 import numpy as np
 
 import fmEphys as fme
-import fmSaccades as fms
-
-
-def stderr(A):
-    return np.std(A) / np.sqrt(len(A))
-
-
-def z_score(A):
-    return (np.max(np.abs(A))-np.mean(A)) / np.std(A)
+import fmSaccades as sacc
 
 
 def add_stimuli_horizontally(df_list):
@@ -46,6 +38,7 @@ def add_sessions_vertically(df_list, savepath=None):
 
     return dataset
 
+
 def stack_dataset(session_dict):
     """
     format should be {'SESSION NAME': [fm1_ephys_props.h5', 'wn_ephys_props.h5']}
@@ -66,3 +59,4 @@ def stack_dataset(session_dict):
     dataset = add_sessions_vertically(df_list, savepath=None)
     
     return dataset
+

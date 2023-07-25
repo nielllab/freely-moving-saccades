@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+import scipy.stats
+
 
 def set_plt_params():
     
@@ -13,8 +15,10 @@ def set_plt_params():
     mpl.rcParams['ps.fonttype'] = 42
     mpl.rcParams.update({'font.size':10})
 
+
 def to_color(r,g,b):
     return (r/255, g/255, b/255)
+
 
 def make_colors():
 
@@ -36,7 +40,27 @@ def make_colors():
 
 
 def jitter_ax(center, size):
+
     return np.ones(size)+np.random.uniform(center-0.2, center+0.2, size)
+
+
+def plot_linregress1(ax, x_in, y_in):
+
+    x = x_in[(~np.isnan(x_in)) * (~np.isnan(y_in))]
+    y = y_in[(~np.isnan(x_in)) * (~np.isnan(y_in))]
+
+    res = scipy.stats.linregress(x, y)
+
+    minval = np.min(x)
+    maxval = np.max(x)
+
+    plotx = np.linspace(0, maxval, 2)
+
+    ax.plot(plotx,
+            (res.slope*plotx) + res.intercept,
+            'k--', linewidth=1)
+            
+    return res
 
 
 def running_median(ax, x, y, n_bins=7, color='k'):

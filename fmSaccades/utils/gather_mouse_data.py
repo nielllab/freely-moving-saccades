@@ -13,282 +13,57 @@ from sklearn.decomposition import PCA
 from scipy.signal import find_peaks
 
 import fmEphys as fme
-import fmSaccades as fms
+import fmSaccades as sacc
 
-def main():
+def main(savepath, h5_path=None, session_dict=None):
+    """
+    Don't need to provide an h5 path. you can include dict of {session_name: [list of h5 paths]}
+    and they will be stacked into a single dataset
+    """
 
-    fms.set_plt_params()
-    cmap = fms.make_colors()
+    sacc.set_plt_params()
+    cmap = sacc.make_colors()
 
-    # Set paths
-    probe = 'DB_P128-D'
-    new_dir = '/home/niell_lab/Data/freely_moving_ephys/ephys_recordings/032122/J599LT' # new animal directory
-    existing_pickle = '/home/niell_lab/Data/freely_moving_ephys/batch_files/051322/ltdk_051322.pickle'
 
-    # Create session dataframe
-    subdirs = fme.list_subdirs(new_dir, givepath=True)
-    usable_recordings = ['fm1','fm1_dark','fm_dark','hf1_wn','hf2_sparsenoiseflash','hf3_gratings','hf4_revchecker']
-    subdirs = [p for p in subdirs if any(s in p for s in usable_recordings)]
-    print(subdirs)
-    df = pd.DataFrame([])
-    for path in subdirs:
-        ephys_path = fme.find('*_ephys_props.h5',path)[0]
-        print(ephys_path)
-        rec_data = pd.read_hdf(ephys_path)
-        rec_type = '_'.join(([col for col in rec_data.columns.values if 'contrast_tuning_bins' in col][0]).split('_')[:-3])
-        rec_data = rec_data.rename(columns={'spikeT':rec_type+'_spikeT',
-                                            'spikeTraw':rec_type+'_spikeTraw',
-                                            'rate':rec_type+'_rate',
-                                            'n_spikes':rec_type+'_n_spikes'})
-        # get column names
-        column_names = list(df.columns.values) + list(rec_data.columns.values)
-        # new columns for same unit within a session
-        df = pd.concat([df, rec_data],axis=1,ignore_index=True)
-        # add the list of column names from all sessions plus the current recording
-        df.columns = column_names
-        # remove duplicate columns (i.e. shared metadata)
-        df = df.loc[:,~df.columns.duplicated()]
+    if h5_path is not None:
+        data = fme.read_group_h5(h5_path)
 
-    ellipse_json_path = fme.find('*fm_eyecameracalc_props.json', new_dir)[0]
-    print(ellipse_json_path)
-    with open(ellipse_json_path) as f:
-        ellipse_fit_params = json.load(f)
-    df['best_ellipse_fit_m'] = ellipse_fit_params['regression_m']
-    df['best_ellipse_fit_r'] = ellipse_fit_params['regression_r']
+        if savepath is None:
+            savepath = os.path.split(h5_path)
 
-    df['original_session_path'] = new_dir
-    df['probe_name'] = probe
+    elif session_dict is not None:
 
-    df['index'] = df.index.values
-    df.reset_index(inplace=True)
+        data = sacc.stack_dataset(session_dict)
+
+        _savepath_h5 = os.path.join(savepath,
+                        'fmSaccades_dataset_{}.h5'.format(fme.fmt_now(c=True)))
+        fme.write_group_h5(data, _savepath_h5)
 
     # Fix gratings spatial frequencies
-    for ind, row in df.iterrows():
-        tuning = row['Gt_ori_tuning_tf'].copy().astype(float)
-        new_tuning = np.roll(tuning, 1, axis=1)
-        df.at[ind, 'Gt_ori_tuning_tf'] = new_tuning.astype(object)
+    # for ind, row in df.iterrows():
+    #     tuning = row['Gt_ori_tuning_tf'].copy().astype(float)
+    #     new_tuning = np.roll(tuning, 1, axis=1)
+    #     df.at[ind, 'Gt_ori_tuning_tf'] = new_tuning.astype(object)
 
-def apply_win_to_comp_sacc(comp, gazeshift, win=0.25):
-    bad_comp = np.array([c for c in comp for g in gazeshift if ((g>(c-win)) & (g<(c+win)))])
-    comp_times = np.delete(comp, np.isin(comp, bad_comp))
-    return comp_times
-stims = ['FmLt', 'FmDk'] # 'FmDk'
+    saccthresh = {
+        'head_moved': 60,  # in deg/sec
+        'gaze_stationary': 120,
+        'gaze_moved': 240
+    }
 
-saccthresh = { # deg/sec
-    'head_moved': 60,
-    'gaze_stationary': 120,
-    'gaze_moved': 240
-}
+    # Cluster out the putative excitatory and inhibitory cells
+    # based on spike waveform.
+    data = sacc.putative_cell_type(data)
 
-for stim in stims:
-    print('calculating movement times')
-    dHead = df[stim+'_dHead'].iloc[0]
-    dGaze = df[stim+'_dGaze'].iloc[0]
-    eyeT = df[stim+'_eyeT'].iloc[0][:-1]
 
-    gazeL = eyeT[(dHead > saccthresh['head_moved']) & (dGaze > saccthresh['gaze_moved'])]
-    gazeR = eyeT[(dHead < -saccthresh['head_moved']) & (dGaze < -saccthresh['gaze_moved'])]
 
-    compL = eyeT[(dHead > saccthresh['head_moved']) & (dGaze < saccthresh['gaze_stationary']) & (dGaze > -saccthresh['gaze_stationary'])]
-    compR = eyeT[(dHead < -saccthresh['head_moved']) & (dGaze > -saccthresh['gaze_stationary']) & (dGaze < saccthresh['gaze_stationary'])]
-
-    compL = apply_win_to_comp_sacc(compL, gazeL)
-    compR = apply_win_to_comp_sacc(compR, gazeR)
-
-    # SDFs
-    for ind in tqdm(df.index.values):
-        spikeT = df.loc[ind,stim+'_spikeT']
-
-        movements = [gazeL, gazeR, compL, compR]
-        movkeys = [stim+'_gazeshift_left_saccPSTH_dHead',
-                stim+'_gazeshift_right_saccPSTH_dHead',
-                stim+'_comp_left_saccPSTH_dHead',
-                stim+'_comp_right_saccPSTH_dHead']
-        timekeys = [stim+'_gazeshift_left_saccTimes_dHead',
-                stim+'_gazeshift_right_saccTimes_dHead',
-                stim+'_comp_left_saccTimes_dHead',
-                stim+'_comp_right_saccTimes_dHead']
-        for x in range(4):
-            movkey = movkeys[x]
-            timekey = timekeys[x]
-            eventT = movements[x]
-
-            # save the spike density function
-            sdf = calc_kde_sdf(spikeT, eventT)
-            df.at[ind, movkey] = sdf.astype(object)
-
-            # save the saccade times
-            df.at[ind, timekey] = eventT.astype(object)
-df.to_hdf('/home/niell_lab/Desktop/temp_df_032122.h5', 'w')
-df = pd.read_hdf('/home/niell_lab/Desktop/temp_df_032122.h5')
-# Head-fixed checkerboard and sparse noise
-## Calculate
-ahf = AddtlHF(new_dir)
-print('Sparse noise')
-ahf.calc_Sn_psth()
-print('Reversing checkerboard')
-ahf.calc_Rc_psth()
-ahf.save()
-df = pd.read_hdf('/home/niell_lab/Desktop/temp_df_032022.h5')
-## Add into dataset
-# set up and create empty columns
-dummy_psth = np.zeros([2001])*np.nan
-psth_series = pd.Series([])
-for i in range(len(df)):
-    psth_series[i] = dummy_psth.astype(object)
-for col in ['Rc_psth','Sn_on_all_psth','Sn_on_darkstim_psth','Sn_on_lightstim_psth',
-            'Sn_on_background_psth','Sn_off_all_psth','Sn_off_darkstim_psth',
-            'Sn_off_lightstim_psth','Sn_off_background_psth']:
-    df[col] = psth_series.copy().astype(object)
-dummy_vals = np.zeros([2])*np.nan
-dummy_series = pd.Series([])
-for i in range(len(df)):
-    dummy_series[i] = dummy_vals.astype(object)
-df['Wn_rf_on_cent'] = dummy_series.copy().astype(object)
-df['Wn_rf_off_cent'] = dummy_series.copy().astype(object)
-
-df['original_session_path']
-psth_files = find('addtlhf_props2.npz', new_dir)[0]
-print('reading '+psth_files)
-psth_data = np.load(psth_files)
-# reversing checkerboard
-rc_psth = psth_data['rc'] # shape is [unit#, time]
-# sparse noise
-sn_on_psth = psth_data['sn_on'] # shape is [unit#, time, all/l2d/d2l/only_global]
-sn_off_psth = psth_data['sn_off'] # shape is [unit#, time, all/l2d/d2l/only_global]
-# receptive field centers
-rf_xy = psth_data['rf'] # shape is [unit#, x/y]
-
-# just the current session
-for i, ind in enumerate(df.index.values):
-    df.at[ind, 'has_hfpsth'] = True
-    df.at[ind, 'Rc_psth'] = rc_psth[i,:]
-    df.at[ind, 'Wn_rf_on_cent'] = rf_xy[i,:2]
-    df.at[ind, 'Wn_rf_off_cent'] = rf_xy[i,2:]
-
-    df.at[ind, 'Sn_on_all_psth'] = sn_on_psth[i,:,0]
-    df.at[ind, 'Sn_on_darkstim_psth'] = sn_on_psth[i,:,1]
-    df.at[ind, 'Sn_on_lightstim_psth'] = sn_on_psth[i,:,2]
-    df.at[ind, 'Sn_on_background_psth'] = sn_on_psth[i,:,3]
-
-    df.at[ind, 'Sn_off_all_psth'] = sn_off_psth[i,:,0]
-    df.at[ind, 'Sn_off_darkstim_psth'] = sn_off_psth[i,:,1]
-    df.at[ind, 'Sn_off_lightstim_psth'] = sn_off_psth[i,:,2]
-    df.at[ind, 'Sn_off_background_psth'] = sn_off_psth[i,:,3]
-df.to_hdf('/home/niell_lab/Desktop/temp_df_032022_v2.h5', 'w')
-# Add into shared dataset
-data = pd.read_pickle(existing_pickle)
-data1 = pd.concat([data, df], axis=0)
-data1.reset_index(inplace=True, drop=True)
-data1.to_pickle('/home/niell_lab/Data/freely_moving_ephys/batch_files/ltdk_051822.pickle')
-# Redo summary analysis
-data = pd.read_pickle('/home/niell_lab/Data/freely_moving_ephys/batch_files/061522/hffm_061522.pickle')
-data = pd.read_pickle('/home/niell_lab/Data/freely_moving_ephys/batch_files/061522/ltdk_061522.pickle')
-## remove recordings
-data['session'].unique()
-data = data[data['session']!='032122_J599LT_control_Rig2']
-len(data.index.values)
-## Putative cell type
-data['norm_waveform'] = data['waveform']
-for ind, row in data.iterrows():
-    if type(row['waveform']) == list:
-        starting_val = np.mean(row['waveform'][:6])
-        center_waveform = [i-starting_val for i in row['waveform']]
-        norm_waveform = center_waveform / -np.min(center_waveform)
-        data.at[ind, 'waveform_trough_width'] = len(norm_waveform[norm_waveform < -0.2])
-        data.at[ind, 'AHP'] = norm_waveform[27]
-        data.at[ind, 'waveform_peak'] = norm_waveform[18]
-        data.at[ind, 'norm_waveform'] = norm_waveform
-
-km_labels = KMeans(n_clusters=2).fit(list(data['norm_waveform'][data['waveform_peak'] < 0].to_numpy())).labels_
-# make inhibitory is always group 0
-# excitatory should always have a smaller mean waveform trough
-# if it's larger, flip the kmeans labels
-if np.mean(data['waveform_trough_width'][data['waveform_peak']<0][km_labels==0]) > np.mean(data['waveform_trough_width'][data['waveform_peak']<0][km_labels==1]):
-    km_labels = [0 if i==1 else 1 for i in km_labels]
-
-data['waveform_km_label'] = np.nan
-count = 0
-for ind, row in data.iterrows():
-    if row['waveform_peak'] < 0 and row['AHP'] < 0.7:
-        data.at[ind, 'waveform_km_label'] = km_labels[count]
-        count = count+1
-
-data['exc_or_inh'] = np.nan
-# make new column of strings for excitatory vs inhibitory clusters
-for ind, row in data.iterrows():
-    if row['waveform_km_label'] == 0:
-        data.at[ind, 'exc_or_inh'] = 'inh'
-    elif row['waveform_km_label'] == 1:
-        data.at[ind, 'exc_or_inh'] = 'exc'
-## Eye/head movements
-def z_score(A):
-    return (np.max(np.abs(A))-np.mean(A)) / np.std(A)
-
-def psth_modind(psth):
-    # modulation in terms of spike rate
-    psth = psth.astype(float)
-    use = psth - np.mean(psth[0:800].copy())
-    mod = np.max(np.abs(use[1000:1250]))
-    return mod
-
-def calc_latency(psth):
-    # use norm PSTH
-    ind = np.argmax(psth[1025:1250])+1025 # was 1000:1170
-    peakT = psth_bins[ind]
-    val = psth[ind]
-    return peakT, val
-
-def get_direction_pref(left, right):
-    # use raw PSTH
-    
-    leftmod = psth_modind(left)
-    rightmod = psth_modind(right)
-
-    ind = np.argmax([leftmod, rightmod])
-    
-    pref = [left, right][ind]
-    nonpref = [left, right][1-ind]
-    
-    prefname = ['left','right'][ind]
-    nonprefname = ['left','right'][1-ind]
-    
-    return pref, nonpref, prefname, nonprefname
-
-def calc_psth_DSI(pref, nonpref):
-    # use pref
-    
-    prefmod = psth_modind(pref)
-    nonprefmod = psth_modind(nonpref)
-    
-    mod = (prefmod - nonprefmod) / (prefmod + nonprefmod)
-    
-    return mod
-    
-def normalize_psth(psth, raw_pref=None, baseline_val=None):
-    if raw_pref is None:
-        raw_pref = psth.copy()
-    if baseline_val is None:
-        baseline_val = np.mean(psth[0:800].astype(float))
-    norm_psth = (psth - baseline_val) / np.max(raw_pref[750:1250].astype(float)) # [1000:1250]
-    return norm_psth
-
-def normalize_gt_psth(psth, baseind=4, zeroind = 5):
-    baseline_val = np.nanmedian(psth[:5])
-    norm_psth = (psth - baseline_val) / np.nanmax(psth[5:14].astype(float))
-    return norm_psth
-
-def gt_modind(psth):
-    psth = psth.astype(float)
-    use = psth - np.mean(psth[1:5].copy())
-    mod = np.max(np.abs(use[5:8]))
-    return mod
 tuning = data['Gt_ori_tuning_tf'].iloc[0].copy()
 tf = 1
 plt.plot(np.arange(8)*45, tuning[:,0,tf], label='low sf')
 plt.plot(np.arange(8)*45, tuning[:,1,tf], label='mid sf')
 plt.plot(np.arange(8)*45, tuning[:,2,tf], label='high sf')
 plt.legend()
+
 ### FmLt
 for ind, row in data.iterrows():
     pref, nonpref, prefname, nonprefname = get_direction_pref(row['FmLt_gazeshift_left_saccPSTH_dHead1'], row['FmLt_gazeshift_right_saccPSTH_dHead1'])

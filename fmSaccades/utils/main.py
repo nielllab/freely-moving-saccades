@@ -23,7 +23,9 @@ mpl.rcParams.update({'font.size':10})
 
 import fmEphys as fme
 
+
 plasma_map = plt.cm.plasma(np.linspace(0,1,15))
+
 colors = {
     'movement': plasma_map[12,:],
     'early': plasma_map[10,:],
@@ -37,6 +39,7 @@ colors = {
 }
 psth_bins = np.arange(-1,1.001,1/1000)
 
+
 def gt_modind(psth):
     # modulation in terms of spike rate
     psth = psth.astype(float)
@@ -46,6 +49,7 @@ def gt_modind(psth):
     mod = np.max(np.abs(use[1500:2500]))
     
     return mod
+
 
 def normalize_gt_psth(psth):
     
@@ -69,19 +73,35 @@ def plot_linregress1(ax, x_in, y_in):
     return res
 
 def running_median(panel, x, y, n_bins=7):
-    bins = np.linspace(np.min(x), np.max(x), n_bins)
-    bin_means, bin_edges, bin_number = stats.binned_statistic(x[~np.isnan(x) & ~np.isnan(y)], y[~np.isnan(x) & ~np.isnan(y)], statistic=np.median, bins=bins)
-    bin_std, _, _ = stats.binned_statistic(x[~np.isnan(x) & ~np.isnan(y)], y[~np.isnan(x) & ~np.isnan(y)], statistic=np.nanstd, bins=bins)
-    hist, _ = np.histogram(x[~np.isnan(x) & ~np.isnan(y)], bins=bins)
-    tuning_err = bin_std / np.sqrt(hist)
-    panel.plot(bin_edges[:-1] + (np.median(np.diff(bins))/2), bin_means, '-', color='k')
-    panel.fill_between(bin_edges[:-1] + (np.median(np.diff(bins))/2), bin_means-tuning_err, bin_means+tuning_err, color='k', alpha=0.2)
 
-def calc_psth_DSI(pref, nonpref):
-    prefmod = psth_modind(pref)
-    nonprefmod = psth_modind(nonpref)
-    mod = (prefmod - nonprefmod) / (prefmod + nonprefmod)
-    return mod
+    bins = np.linspace(np.min(x), np.max(x), n_bins)
+
+    bin_means, bin_edges, bin_number = stats.binned_statistic(
+        x[~np.isnan(x) & ~np.isnan(y)],
+        y[~np.isnan(x) & ~np.isnan(y)],
+        statistic=np.median,
+        bins=bins)
+    
+    bin_std, _, _ = stats.binned_statistic(
+        x[~np.isnan(x) & ~np.isnan(y)],
+        y[~np.isnan(x) & ~np.isnan(y)],
+        statistic=np.nanstd,
+        bins=bins)
+    
+    hist, _ = np.histogram(
+        x[~np.isnan(x) & ~np.isnan(y)],
+        bins=bins)
+    
+    tuning_err = bin_std / np.sqrt(hist)
+
+    panel.plot(bin_edges[:-1] + (np.median(np.diff(bins))/2),
+               bin_means,
+               '-', color='k')
+    
+    panel.fill_between(bin_edges[:-1] + (np.median(np.diff(bins))/2),
+                       bin_means-tuning_err,
+                       bin_means+tuning_err,
+                       color='k', alpha=0.2)
 
 def stderr(a, axis=0):
     return np.nanstd(a,axis=axis) / np.sqrt(np.size(a,axis=axis))

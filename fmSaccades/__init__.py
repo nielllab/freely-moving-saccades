@@ -5,7 +5,13 @@ from .utils.auxillary import (
     drop_nan_along
 )
 
-from .utils.fig_helpers import (
+from .utils.create_dataset import (
+    add_stimuli_horizontally,
+    add_sessions_vertically,
+    stack_dataset
+)
+
+from .utils.plot_helpers import (
     set_plt_params,
     make_colors
 )
@@ -25,4 +31,4 @@ from .utils.psth import (
 
 from .utils.marmoset_figs import (
     spike_raster,
-    
+)
