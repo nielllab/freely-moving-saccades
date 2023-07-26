@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 import fmEphys as fme
-import fmSaccades as sacc
+import saccadeAnalysis as sacc
 
 
 def add_stimuli_horizontally(df_list):

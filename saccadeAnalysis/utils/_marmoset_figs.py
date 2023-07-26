@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-import fmSaccades as fmsacc
+import saccadeAnalysis as fmsacc
 
 fmsacc.set_plt_params()
 

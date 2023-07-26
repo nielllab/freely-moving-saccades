@@ -10,7 +10,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 mpl.rcParams['ps.fonttype'] = 42
 mpl.rcParams.update({'font.size':10})
 
-import fmSaccades as fms
+import saccadeAnalysis as fms
 
 # Create colormap
 plasma_map = plt.cm.plasma(np.linspace(0,1,15))

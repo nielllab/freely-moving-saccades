@@ -1,7 +1,7 @@
 
 import tqdm as tqdm
 
-import fmSaccades as fms
+import saccadeAnalysis as fms
 
 def normPSTH_all(dataset, psth_keys):
 

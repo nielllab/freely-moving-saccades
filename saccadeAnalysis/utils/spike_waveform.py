@@ -1,8 +1,12 @@
+"""
 
+"""
 
 
 import numpy as np
 import sklearn.cluster
+
+import saccadeAnalysis as sacc
 
 
 def putative_cell_type(data):
@@ -10,6 +14,7 @@ def putative_cell_type(data):
     
     """
 
+    # Normalize waveforms and calculate properties
     data['norm_waveform'] = data['waveform'].copy()
 
     for ind, row in data.iterrows():
@@ -21,12 +26,19 @@ def putative_cell_type(data):
             center_waveform = [i-starting_val for i in row['waveform']]
             norm_waveform = center_waveform / -np.min(center_waveform)
 
+            # Trough width: how many samples are below -0.2 uV?
             data.at[ind, 'waveform_trough_width'] = len(norm_waveform[norm_waveform < -0.2])
+            
+            # After hyperpolarization
             data.at[ind, 'AHP'] = norm_waveform[27]
+            
+            # Value of the peak
             data.at[ind, 'waveform_peak'] = norm_waveform[18]
+            
+            # Normalize waveform
             data.at[ind, 'norm_waveform'] = norm_waveform
 
-    # Cluster into two groups
+    # Cluster into two groups: narrow versus broad spiking waveforms
     km = sklearn.cluster.KMeans(n_clusters=2)
     km.fit(list(data['norm_waveform'][data['waveform_peak'] < 0].to_numpy()))
     km_labels = km.labels_
@@ -57,3 +69,4 @@ def putative_cell_type(data):
             data.at[ind, 'exc_or_inh'] = 'exc'
 
     return data
+

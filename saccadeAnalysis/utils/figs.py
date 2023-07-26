@@ -3,7 +3,20 @@ fmEphys/plot/axs.py
 
 Functions for plotting on axes.
 
-
+Functions
+---------
+plot_tuning
+    Plot the tuning curve for one cell.
+plot_columns
+    Categorical column scatter plot.
+plot_PSTH_heatmap
+    Plot a heatmap of normalized PSTHs.
+plot_regression
+    Plot a linear regression.
+plot_running_median
+    Plot median of a dataset along a set of horizontal bins.
+    
+    
 Written by DMM, 2023
 """
 
@@ -15,7 +28,7 @@ import scipy.stats
 import fmEphys as fme
 
 
-def tuning(ax, bins, tuning, error,
+def plot_tuning(ax, bins, tuning, error,
               label=None, unum=None, ylim=None):
     """ Plot the tuning curve for one cell.
 
@@ -65,9 +78,9 @@ def tuning(ax, bins, tuning, error,
         ax.set_xlabel(label)
 
 
-def cat_scatter(ax, df, prop, cat=None, cats=None,
+def plot_columns(ax, df, prop, cat=None, cats=None,
                 colors=None, use_median=False):
-    """ Categorical scatter plot.
+    """ Categorical column scatter plot.
     
     Parameters
     ----------
@@ -76,7 +89,6 @@ def cat_scatter(ax, df, prop, cat=None, cats=None,
 
     
     """
-
 
     if cats is None and cat is None:
 
@@ -112,9 +124,10 @@ def cat_scatter(ax, df, prop, cat=None, cats=None,
     ax.set_xticks(range(len(cats)), cats)
 
 
-def PSTH_heatmap(ax, tseq,
+def plot_PSTH_heatmap(ax, tseq,
                 cscale=0.75):
-    """
+    """ Plot a heatmap of normalized PSTHs.
+
     with shape (n_cells, n_timepoints)
     
     """
@@ -150,6 +163,9 @@ def PSTH_heatmap(ax, tseq,
 
 
 def plot_regression(ax, x_in, y_in):
+    """ Plot a linear regression.
+    
+    """
 
     use_inds = (~np.isnan(x_in)) * (~np.isnan(y_in))
 
@@ -169,7 +185,10 @@ def plot_regression(ax, x_in, y_in):
     return res
 
 
-def running_median(ax, x, y, n_bins=7):
+def plot_running_median(ax, x, y, n_bins=7):
+    """ Plot median of a dataset along a set of horizontal bins.
+    
+    """
 
     bins = np.linspace(np.min(x), np.max(x), n_bins)
 
@@ -199,10 +218,9 @@ def running_median(ax, x, y, n_bins=7):
                        bin_means-tuning_err,
                        bin_means+tuning_err,
                        color='k', alpha=0.2)
+    
 
-
-
-
+def 
 
 
 
@@ -222,7 +240,7 @@ def running_median(ax, x, y, n_bins=7):
 #     panel.vlines(1000, 0, np.size(tseq,0), color='k', linestyle='dashed', linewidth=1)
 #     if return_img:
 #         return img
-
+#
 # def plot_cprop_scatter(panel, data, prop_name, use_median=False):
 #     cmap = fms.make_colors()
 #     for c, cluster in enumerate(['early','late','biphasic','negative']):

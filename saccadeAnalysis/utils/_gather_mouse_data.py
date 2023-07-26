@@ -13,7 +13,7 @@ from sklearn.decomposition import PCA
 from scipy.signal import find_peaks
 
 import fmEphys as fme
-import fmSaccades as sacc
+import saccadeAnalysis as sacc
 
 def main(savepath, h5_path=None, session_dict=None):
     """
@@ -206,6 +206,7 @@ plt.scatter(proj[:,0], proj[:,1], c=Z)
 data['gazecluster_ind'] = -1
 for i, ind in enumerate(data.index.values): # [data['gazeshift_responsive']==True]
     data.at[ind, 'gazecluster_ind'] = Z[i]
+
 plt.subplots(2,3,figsize=(10,8))
 for n, name in enumerate(range(-1,5)):
     plt.subplot(2,3,n+1)
@@ -255,6 +256,10 @@ for n, name in enumerate(range(0,5)):
     plt.xlim([-0.3,0.3])
     plt.ylim([-1.5,1])
 plt.tight_layout()
+
+
+
+
 ## gratings
 for ind, row in data.iterrows():
     sec = row['Gt_eyeT'][-1].astype(float) - row['Gt_eyeT'][0].astype(float)

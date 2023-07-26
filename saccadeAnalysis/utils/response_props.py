@@ -1,10 +1,12 @@
 """
-fmSaccades/utils/tuning_helpers.py
+fmSaccades/utils/response_props.py
 
 Functions
 ---------
 calc_PSTH_modind
     PSTH modulation index.
+norm_PSTH
+
 
 
 Written by DMM, 2022
@@ -81,6 +83,7 @@ def calc_PSTH_modind(psth, trange='fm'):
 
     return mod
 
+
 def norm_PSTH(psth, rawpref=None, trange='fm'):
 
     # When PSTHs are passed in, make sure they are not
@@ -111,14 +114,19 @@ def norm_PSTH(psth, rawpref=None, trange='fm'):
 
         norm_psth = (psth - bsln) / np.nanmax(psth)
 
+    elif trange == 'sn':
+
+        blsn = psth[1000]
+
+        norm_psth = (psth - bsln) / np.nanmax(psth)
 
     return norm_psth
 
 
-def calc_PSTH_DSI(prefPSTH, nonprefPSTH, trange='fm'):
+def calc_PSTH_DSI(pref, nonpref, trange='fm'):
 
-    prefmod = calc_PSTH_modind(prefPSTH, trange=trange)
-    nonprefmod = calc_PSTH_modind(nonprefPSTH, trange=trange)
+    prefmod = calc_PSTH_modind(pref, trange=trange)
+    nonprefmod = calc_PSTH_modind(nonpref, trange=trange)
 
     dsi = (prefmod - nonprefmod) / (prefmod + nonprefmod)
 
@@ -165,19 +173,25 @@ def get_direction_pref(left, right):
     
     return pref, nonpref, prefname, nonprefname
 
-def normalize_gt_psth(psth, baseind=4, zeroind = 5):
+
+def norm_grat_histPSTH(psth, baseind=4, zeroind = 5):
     """
     for hist gratings psth
     """
+    
     baseline_val = np.nanmedian(psth[:5])
     norm_psth = (psth - baseline_val) / np.nanmax(psth[5:14].astype(float))
+
     return norm_psth
 
-def gt_modind(psth):
+
+def calc_grat_histPSTH_modind(psth):
     """
     for hist gratings psth
     """
+
     psth = psth.astype(float)
     use = psth - np.mean(psth[1:5].copy())
     mod = np.max(np.abs(use[5:8]))
+
     return mod

@@ -11,7 +11,7 @@ import sklearn.cluster
 import sklearn.decomposition
 
 import fmEphys as fme
-import fmSaccades as sacc
+import saccadeAnalysis as sacc
 
 class SaccadeDataset():
     def __init__(self):
