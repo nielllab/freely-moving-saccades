@@ -24,8 +24,10 @@ from .utils.response_props import (
 
 # Visualization helper functions
 from .utils.plt_helpers import (
-    set_plt_params,
-    make_colors
+    propsdict,
+    jitter,
+    to_color,
+    set_plt_params
 )
 
 # Generic figures
@@ -64,23 +66,21 @@ from .utils.make_HfFm import (
 from .utils.suppressed_by_contrast import isolate_SBCs
 
 
-
-
-
-
-from .utils.psth import (
-    
+# Figure-generating functions.
+from .nn_figs import (
+    fig1,
+    fig2,
+    fig3,
+    fig4,
+    fig5,
+    fig6,
+    fig7,
+    figS1,
+    figS2,
+    figS3,
+    figS4,
+    figS5,
+    figS6,
+    figS7
 )
 
-from .utils.psth import (
-    calc_PSTH_latency,
-    calc_PSTH_modind,
-    calc_PSTH_DS,
-    calc_PSTH_DSI,
-    norm_PSTH,
-    calc_KDE_PSTH
-)
-
-from .utils.marmoset_figs import (
-    spike_raster,
-)

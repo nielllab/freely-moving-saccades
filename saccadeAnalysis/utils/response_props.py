@@ -70,7 +70,7 @@ def calc_PSTH_modind(psth, trange='fm'):
         mod = np.max(np.abs(use[1000:1250]))
 
     # For flashed head-fixed stimuli
-    elif trange=='fl':
+    elif trange=='sn':
 
         # Subtract the reponse at t=0
         bsln = psth[1000]

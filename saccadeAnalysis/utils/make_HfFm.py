@@ -72,32 +72,106 @@ def HfFm(session_dict, savepath):
     data = sacc.add_labels_to_dataset(data, labels)
 
 
+    # Determine gratings-responsive cells
+    for ind, row in data.iterrows():
+
+        sec = row['Gt_eyeT'][-1].astype(float) - row['Gt_eyeT'][0].astype(float)
+        sp = len(row['Gt_spikeT'])
+        data.at[ind, 'Gt_fr'] = sp/sec
+        
+        data.at[ind, 'raw_mod_for_Gt'] = sacc.calc_PSTH_modind(
+                                                row['Gt_grating_psth'],
+                                                trange='gt')
+        
+        data.at[ind, 'norm_mod_for_Gt'] = sacc.calc_PSTH_modind(
+                                                row['norm_gratings_psth'],
+                                                trange='gt')
+
+    data['Gt_responsive'] = False
+
+    for ind, row in data.iterrows():
+        if (row['raw_mod_for_Gt']>1) and (row['norm_mod_for_Gt']>0.1):
+
+            data.at[ind, 'Gt_responsive'] = True
+
+    # Reversing checkerboard responsive
+    for ind, row in data.iterrows():
+
+        _end = row['Rc_eyeT'][-1].astype(float)
+        _start = row['Rc_eyeT'][0].astype(float)
+
+        sp = len(row['Rc_spikeT'])
+        data.at[ind, 'Rc_fr'] = sp / (_end - _start)
+
+        data.at[ind, 'raw_mod_for_Rc'] = sacc.calc_PSTH_modind(
+                                                    row['Rc_psth'],
+                                                    trange='fm')
+
+        data.at[ind, 'norm_mod_for_Rc'] = sacc.calc_PSTH_modind(row['norm_Rc_psth'])
+        
+    data['Rc_responsive'] = False
+    for ind, row in data.iterrows():
+        if (row['raw_mod_for_Rc']>1) and (row['norm_mod_for_Rc']>0.1):
+            data.at[ind, 'Rc_responsive'] = True
+
+    # Sparse noise responsive
+    for ind, row in data.iterrows():
+        sec = row['Sn_eyeT'][-1].astype(float) - row['Sn_eyeT'][0].astype(float)
+        sp = len(row['Sn_spikeT'])
+        data.at[ind, 'Sn_fr'] = sp/sec
+        
+        data.at[ind, 'raw_mod_for_Sn'] = psth_modind(row['Sn_on_background_psth'], baseval='zero')
+
+        data.at[ind, 'norm_mod_for_Sn'] = psth_modind(row['norm_Sn_psth'], baseval='zero')
+        
+    data['Sn_responsive'] = False
+    for ind, row in data.iterrows():
+        if (row['raw_mod_for_Sn']>1) and (row['norm_mod_for_Sn']>0.1):
+            data.at[ind, 'Sn_responsive'] = True
 
 
+    ### temporal sequences
 
+    fm.loc[ind,'pref_gazeshift_psth'])
+        
+        data.at[ind, 'rc_peakT'] = Rc_peakT
+        data.at[ind, 'sn_peakT'] = Sn_peakT
+        data.at[ind, 'FmLt_gazeshift_peakT'] = Gaze_peakT
 
+    use_cols = ['FmLt_gazeshift_peakT','gazecluster','pref_gazeshift_psth','nonpref_gazeshift_psth','Rc_responsive','Sn_responsive',
+                'pref_comp_psth','Gt_responsive','nonpref_comp_psth','norm_Rc_psth','norm_Sn_psth','tf_pref_cps','sf_pref_cpd','gazeshift_responsive']
+        
+    sorted_df = data[use_cols].copy()
+    tseq_unresp = sorted_df.copy()
+    tseq_unresp = sorted_df[sorted_df['gazecluster']=='unresponsive'][sorted_df['gazeshift_responsive']==False].sample(frac=1).reset_index(drop=True)
+    tseq_unresp_pref = flatten_series(tseq_unresp['pref_gazeshift_psth'])
+    tseq_unresp_nonpref = flatten_series(tseq_unresp['nonpref_gazeshift_psth'])
+    tseq_unresp_comp = flatten_series(tseq_unresp['pref_comp_psth'])
+    tseq_unresp_rc = flatten_series(tseq_unresp['norm_Rc_psth'][sorted_df['Rc_responsive']])
+    tseq_unresp_sn = flatten_series(tseq_unresp['norm_Sn_psth'][sorted_df['Sn_responsive']])
 
+    sorted_df.sort_values(by='FmLt_gazeshift_peakT', inplace=True)
+    sorted_df = sorted_df[sorted_df['gazecluster']!='unresponsive'][sorted_df['gazeshift_responsive']==True].reset_index()
+    tseq_pref = flatten_series(sorted_df['pref_gazeshift_psth'].copy())
+    tseq_nonpref = flatten_series(sorted_df['nonpref_gazeshift_psth'].copy())
+    tseq_comp = flatten_series(sorted_df['pref_comp_psth'].copy())
+    tseq_rc = flatten_series(sorted_df['norm_Rc_psth'][sorted_df['Rc_responsive']].copy())
+    tseq_sn = flatten_series(sorted_df['norm_Sn_psth'][sorted_df['Sn_responsive']].copy())
+    tseq_grat_tf = sorted_df['tf_pref_cps'][sorted_df['Gt_responsive']].copy().to_numpy()
+    tseq_grat_sf = sorted_df['sf_pref_cpd'][sorted_df['Gt_responsive']].copy().to_numpy()
 
+    tseq_pref1 = np.vstack([tseq_pref, tseq_unresp_pref])
+    tseq_nonpref1 = np.vstack([tseq_nonpref, tseq_unresp_nonpref])
+    tseq_comp1 = np.vstack([tseq_comp, tseq_unresp_comp])
+    tseq_rc1 = np.vstack([tseq_rc, tseq_unresp_rc])
+    tseq_sn1 = np.vstack([tseq_sn, tseq_unresp_sn])
 
-
-
-
-
-
-
-## gratings
-for ind, row in data.iterrows():
-
-    sec = row['Gt_eyeT'][-1].astype(float) - row['Gt_eyeT'][0].astype(float)
-    sp = len(row['Gt_spikeT'])
-    data.at[ind, 'Gt_fr'] = sp/sec
-    
-    data.at[ind, 'raw_mod_for_Gt'] = gt_modind(row['Gt_grating_psth'])
-    
-    data.at[ind, 'norm_mod_for_Gt'] = gt_modind(row['norm_gratings_psth'])
-
-# gratings responsive
-data['Gt_responsive'] = False
-for ind, row in data.iterrows():
-    if (row['raw_mod_for_Gt']>1) and (row['norm_mod_for_Gt']>0.1):
-        data.at[ind, 'Gt_responsive'] = True
+    tseq_legend_col = sorted_df['gazecluster'].copy()
+    tseq_legend = np.zeros([len(tseq_legend_col.index.values), 1, 4])
+    for i, n in enumerate(tseq_legend_col):
+        tseq_legend[i,:,:] = colors[n]
+    ucmap = mpl.colors.to_rgba(colors['unresponsive'])
+    u = np.zeros([np.size(tseq_unresp_pref,0), 1, 4])
+    for x in range(4):
+        u[:,:,x] = ucmap[x]
+    tseq_legend1 = np.vstack([tseq_legend, u])
