@@ -511,6 +511,7 @@ for k in range(5):
 plt.xlim(-0.2,0.4)
 plt.vlines(0,-.5,.5 ,'k')
 plt.legend()
+
 def label_movcluster(psth, el_bound=0.08):
     """
     PSTH should be the neural response to eye movements
@@ -619,6 +620,8 @@ for ind, row in data.iterrows():
     data.at[ind,'tf_pref_cps'] = tf
     data.at[ind,'sf_pref_cpd'] = sf
     data.at[ind,'grat_speed_dps'] = tf / sf
+
+
 # Some light/dark calcs
 model_dt = 0.025
 for ind, row in data.iterrows():
@@ -671,6 +674,8 @@ for ind, row in data[['norm_Rc_psth','norm_Sn_psth','pref_gazeshift_psth']].iter
         data.at[ind, 'gaze_sn_maxcc'] = r[0,1]
 # Save the dataset as a pickle
 data.to_pickle('/home/niell_lab/Data/freely_moving_ephys/batch_files/062022/ltdk_062022.pickle')
+
+
 # Other
 fig1 = plt.figure(constrained_layout=True, figsize=(9,7.6), dpi=300)
 fig1spec = gridspec.GridSpec(nrows=5, ncols=3, figure=fig1, wspace=1.5, hspace=1.5)

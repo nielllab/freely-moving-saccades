@@ -59,6 +59,10 @@ def get_norm_FmLt_PSTHs(data):
             trange = 'fm'
         ).astype(object)
 
+        
+
+    return data
+
 def get_norm_FmDk_PSTHs(data):
     for ind, row in data.iterrows():
 
@@ -100,7 +104,7 @@ def get_norm_FmDk_PSTHs(data):
                                                     row['nonpref_gazeshift_direction'])].astype(object)
 
 
-def get_norm_HF_PSTHs(data):
+def get_norm_Hf_PSTHs(data):
 
     for ind, row in data.iterrows():
 

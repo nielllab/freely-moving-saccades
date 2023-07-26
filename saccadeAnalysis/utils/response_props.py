@@ -71,14 +71,19 @@ def calc_PSTH_modind(psth, trange='fm'):
 
     # For flashed head-fixed stimuli
     elif trange=='fl':
+
         # Subtract the reponse at t=0
-        use = psth - psth[1000]
+        bsln = psth[1000]
+        use = psth.copy() - bsln
+        
         mod = np.max(np.abs(use[1000:1250]))
 
     # For drifting gratings
     elif trange=='gt':
 
-        use = psth - np.mean(psth[1100:1400].copy())
+        bsln = np.mean(psth[1100:1400].copy())
+        use = psth.copy() - bsln
+
         mod = np.max(np.abs(use[1500:2500]))
 
     return mod

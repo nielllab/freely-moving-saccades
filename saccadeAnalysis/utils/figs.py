@@ -17,7 +17,7 @@ plot_running_median
     Plot median of a dataset along a set of horizontal bins.
     
     
-Written by DMM, 2023
+Written by DMM, 2022
 """
 
 

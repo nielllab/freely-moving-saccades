@@ -1,18 +1,17 @@
 """
-
+saccadeAnalysis
 
 Written by DMM, 2022
 """
 
-
-
-# Create dataset
+# Create dataset.
 from .utils.create_dataset import (
     add_stimuli_horizontally,
     add_sessions_vertically,
     stack_dataset
 )
 
+# Quantify response properties.
 from .utils.response_props import (
     calc_PSTH_modind,
     norm_PSTH,
@@ -21,6 +20,12 @@ from .utils.response_props import (
     get_direction_pref,
     norm_grat_histPSTH,
     calc_grat_histPSTH_modind
+)
+
+# Visualization helper functions
+from .utils.plt_helpers import (
+    set_plt_params,
+    make_colors
 )
 
 # Generic figures
@@ -32,6 +37,7 @@ from .utils.figs import (
     plot_running_median
 )
 
+# Cluster analysis
 from .utils.gazeshift_clusters import (
     make_cluster_model_input,
     make_clusters,
@@ -39,24 +45,28 @@ from .utils.gazeshift_clusters import (
     apply_saved_cluster_models
 )
 
+# Seperate excitatory and inhibitory cells (based on
+# narrow versus broad spike waveform).
+from .utils.spike_waveform import putative_cell_type
 
 
+# Helper functions for mouse analysis.
+from .utils.mouse_helpers import (
 
-######
-
-
-from .utils.auxillary import (
-    z_score,
-    stderr,
-    drop_nan_along
 )
 
+from .utils.make_HfFm import (
 
 
-from .utils.plot_helpers import (
-    set_plt_params,
-    make_colors
 )
+
+# Isolate SBCs.
+from .utils.suppressed_by_contrast import isolate_SBCs
+
+
+
+
+
 
 from .utils.psth import (
     
