@@ -6,6 +6,8 @@ for figure 1
 
 """
 
+
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -15,15 +17,15 @@ import fmEphys as fme
 import saccadeAnalysis as sacc
 
 
-def figure1A(hffm):
+def fig1_demo_data(hffm):
 
+    # Plotting parameters.
     sacc.set_plt_params()
-    
     props = sacc.propsdict()
     colors = props['colors']
     psth_bins = props['psth_bins']
 
-    # Set up demo data
+    # Choose session to use for behavior demo data.
     demo = hffm[hffm['session']=='102621_J558NC_control_Rig2'].iloc[0]
 
     dHead_data = demo['FmLt_dHead']
@@ -43,60 +45,74 @@ def figure1A(hffm):
     
     gazemovs = np.hstack([left, right])
 
-    ### figure 1, first handful of panels
-    fig1 = plt.figure(constrained_layout=True, figsize=(9,8), dpi=300)
-    fig1spec = gridspec.GridSpec(nrows=5, ncols=3, figure=fig1, wspace=1.5, hspace=1.5)
+    # Fig1 panels D,E,F,G
+    fig = plt.figure(constrained_layout=True, figsize=(9,8), dpi=300)
+    figspec = gridspec.GridSpec(nrows=5, ncols=3,
+                                figure=fig,
+                                wspace=1.5, hspace=1.5)
 
-    fig1Cspec = gridspec.GridSpecFromSubplotSpec(3,1,subplot_spec=fig1spec[0:2,1], wspace=0, hspace=0.01)
-    ax_theta = fig1.add_subplot(fig1Cspec[0,0])
-    ax_yaw = fig1.add_subplot(fig1Cspec[1,0])
-    ax_gaze = fig1.add_subplot(fig1Cspec[2,0])
+    specA = gridspec.GridSpecFromSubplotSpec(3, 1,
+                                             subplot_spec=figspec[0:2,1],
+                                             wspace=0, hspace=0.01)
+    ax_theta = fig.add_subplot(specA[0,0])
+    ax_yaw = fig.add_subplot(specA[1,0])
+    ax_gaze = fig.add_subplot(specA[2,0])
 
-    fig1Dspec = gridspec.GridSpecFromSubplotSpec(1,1,subplot_spec=fig1spec[0:2,2], wspace=0, hspace=0)
-    ax_dEyeHead = fig1.add_subplot(fig1Dspec[0,0])
+    specB = gridspec.GridSpecFromSubplotSpec(1, 1,
+                                             subplot_spec=figspec[0:2,2],
+                                             wspace=0, hspace=0)
+    ax_dEyeHead = fig.add_subplot(specB[0,0])
 
-    fig1E2Fspec = gridspec.GridSpecFromSubplotSpec(3,3,subplot_spec=fig1spec[2:,0:2], wspace=0.15, hspace=-.05)
+    specC = gridspec.GridSpecFromSubplotSpec(3, 3,
+                                             subplot_spec=figspec[2:,0:2],
+                                             wspace=0.15, hspace=-.05)
+    ax_pos_rasterG = fig.add_subplot(specC[0,0])
+    ax_biph_rasterG = fig.add_subplot(specC[0,1])
+    ax_neg_rasterG = fig.add_subplot(specC[0,2])
+    ax_pos_rasterC = fig.add_subplot(specC[1,0])
+    ax_biph_rasterC = fig.add_subplot(specC[1,1])
+    ax_neg_rasterC = fig.add_subplot(specC[1,2])
+    ax_pos_psth = fig.add_subplot(specC[2,0])
+    ax_biph_psth = fig.add_subplot(specC[2,1])
+    ax_neg_psth = fig.add_subplot(specC[2,2])
 
-    ax_pos_rasterG = fig1.add_subplot(fig1E2Fspec[0,0])
-    ax_biph_rasterG = fig1.add_subplot(fig1E2Fspec[0,1])
-    ax_neg_rasterG = fig1.add_subplot(fig1E2Fspec[0,2])
+    specD = gridspec.GridSpecFromSubplotSpec(2, 1,
+                                             subplot_spec=figspec[2:,2:],
+                                             wspace=0.2, hspace=0.1)
+    ax_ex_gaze = fig.add_subplot(specD[0,0])
+    ax_ex_comp = fig.add_subplot(specD[1,0])
 
-    ax_pos_rasterC = fig1.add_subplot(fig1E2Fspec[1,0])
-    ax_biph_rasterC = fig1.add_subplot(fig1E2Fspec[1,1])
-    ax_neg_rasterC = fig1.add_subplot(fig1E2Fspec[1,2])
-
-    ax_pos_psth = fig1.add_subplot(fig1E2Fspec[2,0])
-    ax_biph_psth = fig1.add_subplot(fig1E2Fspec[2,1])
-    ax_neg_psth = fig1.add_subplot(fig1E2Fspec[2,2])
-
-    fig1Gspec = gridspec.GridSpecFromSubplotSpec(2,1,subplot_spec=fig1spec[2:,2:], wspace=0.2, hspace=0.1)
-    ax_ex_gaze = fig1.add_subplot(fig1Gspec[0,0])
-    ax_ex_comp = fig1.add_subplot(fig1Gspec[1,0])
-
-    start = 2090 #2100
+    start = 2090
     win = 60 # frames, not sec
-    ex_units = [215, 579, 277] # [39,112,126]
+    ex_units = [215, 579, 277]
 
-    ylim_val = 20 # was 36 for bioRxiv fig
+    ylim_val = 20
+
+    # Theta
     theta_data = demo['FmLt_theta'][start:start+win]
     theta_data = theta_data - np.nanmean(theta_data)
     ax_theta.plot(theta_data, 'k-', linewidth=2, scaley=10)
-    ax_theta.set_xlim([0,60]); ax_theta.set_xticks(ticks=np.linspace(0,60,5), labels=np.linspace(0,1,5))
+    ax_theta.set_xlim([0,60])
+    ax_theta.set_xticks(ticks=np.linspace(0,60,5),
+                        labels=np.linspace(0,1,5))
     ax_theta.set_ylabel('theta (deg)')
-    ax_theta.set_ylim([-ylim_val,ylim_val])
+    ax_theta.set_ylim([-ylim_val, ylim_val])
     ax_theta.axes.get_xaxis().set_visible(False)
     ax_theta.axes.spines.bottom.set_visible(False)
 
+    # Head yaw
     pYaw = np.nancumsum(demo['FmLt_dHead'][start:start+win]*0.016)
     pYaw = pYaw - np.nanmean(pYaw)
     ax_yaw.plot(pYaw, 'k-', linewidth=2)
     ax_yaw.set_xlim([0,60])
-    ax_yaw.set_xticks(ticks=np.linspace(0,60,5), labels=np.linspace(0,1,5))
+    ax_yaw.set_xticks(ticks=np.linspace(0,60,5),
+                      labels=np.linspace(0,1,5))
     ax_yaw.set_ylabel('yaw (deg)')
     ax_yaw.axes.get_xaxis().set_visible(False)
     ax_yaw.axes.spines.bottom.set_visible(False)
-    ax_yaw.set_ylim([-ylim_val,ylim_val])
+    ax_yaw.set_ylim([-ylim_val, ylim_val])
 
+    # Gaze position
     ax_gaze.plot(pYaw + theta_data, 'k-', linewidth=2)
     ax_gaze.set_xlim([0,60])
     ax_gaze.set_xticks(ticks=np.linspace(0,60,5), labels=np.linspace(0,1000,5).astype(int))
@@ -104,6 +120,7 @@ def figure1A(hffm):
     ax_gaze.set_ylim([-ylim_val,ylim_val])
     ax_gaze.set_xlabel('time (msec)')
 
+    # 
     for i in plotinds:
         dGaze_i = np.abs(dHead_data[i]+dEye_data[i])
         if (eyeT[i] in gazemovs) or (dGaze_i>240):
@@ -122,10 +139,7 @@ def figure1A(hffm):
     ax_dEyeHead.set_xlabel('head velocity (deg/sec)')
     ax_dEyeHead.set_ylabel('eye velocity (deg/sec)')
     ax_dEyeHead.plot([-500,500],[500,-500], linestyle='dashed', color='k', linewidth=1)
-    # ax_dEyeHead.annotate('left', xy=[350,500], color='k')
-    # ax_dEyeHead.annotate('right', xy=[-550,-500], color='k')
-    # ax_dEyeHead.annotate('gaze shift', xy=[-620,470], color=colors['gaze'])
-    # ax_dEyeHead.annotate('compensated', xy=[-620,550], color=colors['comp'])
+
     ax_dEyeHead.set_xticks(np.linspace(-600,600,5))
     ax_dEyeHead.set_yticks(np.linspace(-600,600,5))
 
@@ -133,6 +147,7 @@ def figure1A(hffm):
     raster_panelsG = [ax_pos_rasterG, ax_biph_rasterG, ax_neg_rasterG]
     raster_panelsC = [ax_pos_rasterC, ax_biph_rasterC, ax_neg_rasterC]
     sdf_panels = [ax_pos_psth, ax_biph_psth, ax_neg_psth]
+
     for i, u in enumerate(ex_units):
         row = hffm.iloc[u]
         rasterG = raster_panelsG[i]
@@ -156,18 +171,21 @@ def figure1A(hffm):
         for n, s in enumerate(plot_cp):
             sp = row['FmLt_spikeT']-s
             sp = sp[np.abs(sp)<=0.5]
-            rasterC.plot(sp, np.ones(sp.size)*n, '|', color=colors['comp'], markersize=0.3) # was 0.25
+            rasterC.plot(sp, np.ones(sp.size)*n, '|', color=colors['comp'], markersize=0.3)
         
         rasterG.set_ylim([num_movements, 0]); rasterC.set_ylim([num_movements,0])
         rasterG.vlines(0, 0, num_movements, color='k', linewidth=1, linestyle='dashed')
         rasterC.vlines(0, 0, num_movements, color='k', linewidth=1, linestyle='dashed')
+        
         if i == 0:
             rasterG.set_ylabel('gaze shifts'); rasterC.set_ylabel('compensatory')
             rasterG.set_yticks(np.linspace(0, num_movements, 3))
             rasterC.set_yticks(np.linspace(0, num_movements, 3))
+        
         else:
             rasterG.set_yticks(np.linspace(0, num_movements, 3),labels=[])
             rasterC.set_yticks(np.linspace(0, num_movements, 3),labels=[])
+        
         rasterG.set_xticks([]); rasterC.set_xticks([])
         rasterG.set_xlim([-.5,.5]); rasterC.set_xlim([-.5,.5])
         rasterG.axes.spines.bottom.set_visible(False); rasterC.axes.spines.bottom.set_visible(False)
@@ -201,8 +219,8 @@ def figure1A(hffm):
     ax_ex_comp.set_xlabel('time (msec)')
     ax_ex_gaze.set_xlabel('time (msec)')
 
-    all_comp = flatten_series(hffm['pref_comp_psth'][hffm['gazecluster']!='unresponsive'][hffm['gazeshift_responsive']])
-    all_gaze = flatten_series(hffm['pref_gazeshift_psth'][hffm['gazecluster']!='unresponsive'][hffm['gazeshift_responsive']])
+    all_comp = fme.flatten_series(hffm['pref_comp_psth'][hffm['gazecluster']!='unresponsive'][hffm['gazeshift_responsive']])
+    all_gaze = fme.flatten_series(hffm['pref_gazeshift_psth'][hffm['gazecluster']!='unresponsive'][hffm['gazeshift_responsive']])
 
     comp_mean = np.nanmean(all_comp,0)
     comp_std = np.std(all_comp,0) / np.sqrt(np.size(all_comp))

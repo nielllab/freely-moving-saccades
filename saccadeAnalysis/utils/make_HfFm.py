@@ -9,7 +9,7 @@ import fmEphys as fme
 import saccadeAnalysis as sacc
 
 
-def HfFm(session_dict, savepath):
+def make_hffm_dataset(session_dict, savepath):
 
     _saveas = os.path.join(savepath,
                            'HfFm_plain_dataset_{}.h5'.format(fme.fmt_now(c=True)))
