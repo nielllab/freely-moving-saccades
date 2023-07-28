@@ -17,7 +17,7 @@ import fmEphys as fme
 import saccadeAnalysis as sacc
 
 
-def fig1_demo_data(hffm):
+def fig1(hffm, savepath):
 
     # Plotting parameters.
     sacc.set_plt_params()
@@ -235,15 +235,9 @@ def fig1_demo_data(hffm):
     ax_ex_gaze.vlines(0, -0.75, 1, 'k', linewidth=1, linestyle='dashed')
     ax_ex_comp.vlines(0, -0.75, 1, 'k', linewidth=1, linestyle='dashed')
 
-    fig1.savefig(os.path.join(figpath, '1_gazeshift_v_comp.pdf'))
+    fig1.savefig(os.path.join(savepath, '1_gazeshift_v_comp.pdf'))
 
 
-
-
-def figure1B():
-    """
-    example rasters
-    """
     
     gaze = row['FmLt_gazeshift_{}_saccTimes_dHead1'.format(row['pref_gazeshift_direction'])].copy()
     comp = row['FmLt_comp_{}_saccTimes_dHead1'.format(row['pref_gazeshift_direction'])].copy()
@@ -289,7 +283,7 @@ def figure1B():
 
     fig.tight_layout()
 
-    fig.savefig(os.path.join(figpath, '0_gaze_comp_rasters_1.pdf'))
+    fig.savefig(os.path.join(savepath, '0_gaze_comp_rasters_1.pdf'))
 
 
     fig, [ax0, ax1] = plt.subplots(1,2, figsize=(6,2), dpi=300)
@@ -327,7 +321,7 @@ def figure1B():
     ax1.set_xticks(np.linspace(-.5, .5, 5), labels=np.linspace(-500, 500, 5).astype(int))
 
     fig.tight_layout()
-    fig.savefig(os.path.join(figpath, '0_gaze_comp_rasters_2.pdf'))
+    fig.savefig(os.path.join(savepath, '0_gaze_comp_rasters_2.pdf'))
 
     
     fig, [ax0, ax1] = plt.subplots(1,2, figsize=(6,2), dpi=300)
@@ -343,4 +337,4 @@ def figure1B():
     ax0.set_xticks(np.linspace(-.5, .5, 5), labels=np.linspace(-500, 500, 5).astype(int))
 
     fig.tight_layout()
-    fig.savefig(os.path.join(figpath, '0_gaze_comp_rasters_3.pdf'))
+    fig.savefig(os.path.join(savepath, '0_gaze_comp_rasters_3.pdf'))

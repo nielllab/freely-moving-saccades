@@ -218,9 +218,6 @@ def plot_running_median(ax, x, y, n_bins=7):
                        bin_means-tuning_err,
                        bin_means+tuning_err,
                        color='k', alpha=0.2)
-    
-
-
 
 
 

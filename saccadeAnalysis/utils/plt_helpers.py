@@ -81,6 +81,21 @@ def jitter(c, sz, maxdist=0.2):
     return j_x
 
 
+def make_category_col(ax, c, data, usecolor):
+    
+
+    x_jitter = jitter(c, np.size(data,0), 0.1)
+
+    ax.plot(x_jitter, data, '.', color=usecolor, markersize=1)
+
+    hline = np.nanmedian(data)
+    ax.hlines(hline, c-0.1, c+0.1, color='k', linewidth=2)
+    err = np.std(data) / np.sqrt(np.size(data))
+    ax.vlines(c, hline-err, hline+err, color='k', linewidth=2)
+    
+    return hline, err
+
+
 def to_color(r,g,b):
     """ Convert RGB values to a color tuple.
     

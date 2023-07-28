@@ -1,6 +1,7 @@
 
 
 
+import numpy as np
 
 import saccadeAnalysis as sacc
 
@@ -126,7 +127,7 @@ def get_norm_Hf_PSTHs(data):
             trange = 'sn'
         ).astype(object)
 
-def FmLtDk_peak_time():
+def FmLtDk_peak_time(data):
 
     ## Peak time
     psth_bins = np.arange(-1,1.001,1/1000)
@@ -136,7 +137,7 @@ def FmLtDk_peak_time():
         raw_psth = row['pref_gazeshift_psth_raw']
         norm_psth = row['pref_gazeshift_psth']
         
-        peakT, peak_val = calc_latency(norm_psth)
+        peakT, peak_val = sacc.calc_PSTH_latency(norm_psth)
         
         data.at[ind, 'FmLt_gazeshift_baseline'] = raw_psth[0:800].astype(object)
         data.at[ind, 'FmLt_gazeshift_med_baseline'] = np.median(raw_psth[0:800])
@@ -151,11 +152,10 @@ def FmLtDk_peak_time():
         raw_psth = row['pref_dark_gazeshift_psth_raw']
         norm_psth = row['pref_dark_gazeshift_psth']
         
-        peakT, peak_val = calc_latency(norm_psth)
+        peakT, peak_val = sacc.calc_PSTH_latency(norm_psth)
         
         data.at[ind, 'FmDk_gazeshift_baseline'] = raw_psth[0:800].astype(object)
         data.at[ind, 'FmDk_gazeshift_med_baseline'] = np.median(raw_psth[0:800])
         data.at[ind, 'FmDk_gazeshift_peak_val'] = peak_val
         data.at[ind, 'FmDk_gazeshift_peakT'] = peakT
 
-def 
