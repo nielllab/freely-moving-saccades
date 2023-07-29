@@ -115,7 +115,11 @@ def stack_dataset(session_dict, savepath=None):
         
         sdf = add_stimuli_horizontally(_s_dfs)
 
+        df_list.append(sdf)
+
     dataset = add_sessions_vertically(df_list)
+
+    dataset = fme.replace_xr_obj(dataset)
 
     if savepath is not None:
         print('Writing file to {}'.format(savepath))

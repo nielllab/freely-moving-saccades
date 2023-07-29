@@ -1,3 +1,6 @@
+    
+def figS4():
+    
     dark_resp_inds = set(ltdk[ltdk['dark_responsive']==True].index.values)
     light_resp_inds = set(ltdk[ltdk['gazecluster']!='unresponsive'].index.values)
 

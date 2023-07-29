@@ -1,4 +1,6 @@
 
+def fig3():
+
     ### fig 3 light/dark
     for ind in ltdk.index.values:
         Lt_peakT, Lt_peakVal = calc_latency(ltdk.loc[ind,'pref_gazeshift_psth'])

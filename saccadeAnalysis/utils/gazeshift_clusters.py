@@ -85,7 +85,7 @@ def make_clusters(pca_input, model_savepath):
         as diagnostics.
     """
 
-    n_pcas = 10
+    n_pcas = 25
     n_clusters = 5
 
     # PCA
@@ -132,13 +132,14 @@ def make_clusters(pca_input, model_savepath):
         'proj': proj,
         'gproj': gproj,
         'explvar': explvar,
-        'keep_pcas': keep_pcas
+        'keep_pcas': keep_pcas,
+        'pca_input': pca_input
     }
 
     return labels, _opt_outputs
 
 
-def add_labels_to_dataset(data, labels):
+def add_labels_to_dataset(data, labels, savepath):
     """ Add the cluster labels to the dataset object.
 
     Parameters
@@ -161,7 +162,7 @@ def add_labels_to_dataset(data, labels):
 
 
     # Label the clusters based on waveform.
-    fig, axs = plt.subplots(2,3,figsize=(10,8))
+    fig, axs = plt.subplots(2,3, figsize=(10,8))
     axs = axs.flatten()
 
     psth_bins = np.arange(-1,1.001,1/1000)
@@ -185,6 +186,7 @@ def add_labels_to_dataset(data, labels):
         axs[n].set_ylim([-1.5,1])
 
     fig.tight_layout()
+    fig.savefig(os.path.join(savepath, 'KMEANS_RESULTS.png'))
     fig.show()
 
     # Get user-input to assign labels

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def main():
+def figS2():
     ### depth
     fig2 = plt.figure(constrained_layout=True, figsize=(8,3), dpi=300)
     fig2spec = gridspec.GridSpec(nrows=1, ncols=6, figure=fig2, wspace=.1, hspace=0)

@@ -56,7 +56,10 @@ def calc_PSTH_modind(psth, trange='fm'):
 
     """
 
-    psth = psth.astype(float)
+    if type(psth) != float:
+        psth = psth.astype(float)
+    elif type(psth) == float:
+        return np.nan
 
     # FOr freely moving eye/head movements
     if trange=='fm':
@@ -94,7 +97,10 @@ def norm_PSTH(psth, rawpref=None, trange='fm'):
     # When PSTHs are passed in, make sure they are not
     # of dtype==object, which is the case when they are
     # formatted as a column
-    psth = psth.astype(float)
+    if type(psth) != float:
+        psth = psth.astype(float)
+    elif type(psth) == float:
+        return np.nan
     if rawpref is not None:
         rawpref = rawpref.astype(float)
 
@@ -121,7 +127,7 @@ def norm_PSTH(psth, rawpref=None, trange='fm'):
 
     elif trange == 'sn':
 
-        blsn = psth[1000]
+        bsln = psth[1000]
 
         norm_psth = (psth - bsln) / np.nanmax(psth)
 
@@ -165,8 +171,8 @@ def calc_PSTH_latency(normpsth):
 def get_direction_pref(left, right):
     # use raw PSTH
     
-    leftmod = psth_modind(left)
-    rightmod = psth_modind(right)
+    leftmod = calc_PSTH_modind(left)
+    rightmod = calc_PSTH_modind(right)
 
     ind = np.argmax([leftmod, rightmod])
     

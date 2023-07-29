@@ -1,4 +1,6 @@
     
+    
+def fig2(hffm, savepath):
 
     fig, ax = plt.subplots(1,1,figsize=(0.5,1.5), dpi=300)
     ax.imshow(tseq_legend1, aspect=.05)

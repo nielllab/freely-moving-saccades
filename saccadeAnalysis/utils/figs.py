@@ -133,7 +133,7 @@ def plot_PSTH_heatmap(ax, tseq,
     """
 
     ax.set_xlabel('time (msec)')
-    ax.set_ylim('cells')
+    ax.set_ylabel('cells')
     ax.set_ylim([np.size(tseq,0), 0])
 
     img = ax.imshow(tseq, cmap='coolwarm', vmin=-cscale,
