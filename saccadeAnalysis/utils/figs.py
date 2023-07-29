@@ -140,13 +140,13 @@ def plot_PSTH_heatmap(ax, tseq,
                     vmax=cscale)
     
     if np.size(tseq,1)==2001:
-        psth_bins = np.linspace(-1., 1., 1/1000)
+        psth_bins = np.arange(-1., 1., 1/1000)
         winStart = 800 # 1000-200
         winEnd = 1400 # 1000+400
         cent = 1000
 
     elif np.size(tseq,1)==3001:
-        psth_bins = np.linspace(-1.5, 1.5, 1/1000)
+        psth_bins = np.arange(-1.5, 1.5, 1/1000)
         winStart = 1300 # 1500-200
         winEnd = 1900 # 1500+400
         cent = 1500

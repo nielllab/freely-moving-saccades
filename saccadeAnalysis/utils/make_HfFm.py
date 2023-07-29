@@ -192,17 +192,27 @@ def make_hffm_dataset(savepath, session_dict=None, hffm_path=None,
         th_pref = np.nanargmax(tuning,0) # get position of highest firing rate
 
         for sf in range(3):
+            
             # get that firing rate (avg between peaks)
             R_pref = (tuning[th_pref[sf], sf] + (tuning[(th_pref[sf]+4)%8, sf])) * 0.5
-            th_ortho = (th_pref[sf]+2)%8 # get ortho position
+            
+            # get ortho position
+            th_ortho = (th_pref[sf]+2) % 8
+            
             # ortho firing rate (average between two peaks)
             R_ortho = (tuning[th_ortho, sf] + (tuning[(th_ortho+4)%8, sf])) * 0.5
+            
             # orientaiton selectivity index
             osi[sf] = (R_pref - R_ortho) / (R_pref + R_ortho)
+            
             # direction selectivity index
             # get other direction of same orientation
-            th_null = (th_pref[sf]+4)%8
-            R_null = tuning[th_null, sf] # tuning value at that peak
+            th_null = (th_pref[sf]+4) % 8
+            
+            # tuning value at that peak
+            R_null = tuning[th_null, sf]
+            
+            # direction selectivity index
             dsi[sf] = (R_pref - R_null) / (R_pref + R_null)
 
         data.at[ind, 'Gt_osi_low'] = osi[0]
@@ -296,7 +306,7 @@ def make_hffm_dataset(savepath, session_dict=None, hffm_path=None,
     #     u[:,:,x] = ucmap[x]
     # tseq_legend1 = np.vstack([tseq_legend, u])
 
-    outdata = {
+    out = {
         'Rc_temseq': tseq_rc,
         'Sn_temseq': tseq_sn,
         'Fm_pref_temseq': tseq_pref,
@@ -308,4 +318,3 @@ def make_hffm_dataset(savepath, session_dict=None, hffm_path=None,
     return data, out
 
 
-    
