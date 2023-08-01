@@ -98,7 +98,7 @@ def plot_columns(ax, df, prop, cat=None, cats=None,
         _props = fme.props()
         colors = _props['colors']
 
-    for c_i, c in enumerate(cats.items()):
+    for c_i, c in enumerate(cats):
 
         cdata = df[prop][df[cat]==c]
 
