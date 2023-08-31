@@ -38,11 +38,11 @@ def waveform(ax, row):
 
     samprate = 30000
 
-    wv = row['waveform']
+    wv = row['FmLt_waveform']
     ax.plot(np.arange(len(wv)) * 1000 / samprate, wv, color='k')
     ax.set_ylabel('millivolts')
     ax.set_xlabel('msec')
-    ax.set_title(row['KSLabel']+' cont='+str(np.round(row['ContamPct'],3)), fontsize=20)
+    ax.set_title(row['FmLt_KSLabel']+' cont='+str(np.round(row['FmLt_ContamPct'],3)), fontsize=20)
 
 
 def tuning_curve(ax, row, varcent_name, tuning_name, err_name, title, xlabel):
@@ -57,7 +57,10 @@ def tuning_curve(ax, row, varcent_name, tuning_name, err_name, title, xlabel):
     ax.set_title(title+'\nmod.ind.='+str(modind), fontsize=20)
     ax.set_xlabel(xlabel)
     ax.set_ylabel('sp/sec')
-    ax.set_ylim(0, np.nanmax(tuning[:]*1.2))
+    maxval = np.nanmax(tuning[:]*1.2)
+    if not np.isfinite(maxval):
+        maxval = 1
+    ax.set_ylim(0, maxval*1.2)
 
     return modind
 
@@ -113,7 +116,7 @@ def grat_stim_tuning(ax, row, ind, data, tf_sel='mean'):
 def revchecker_laminar_depth(ax, row, ind, data):
 
     if np.size(row['Rc_response_by_channel'],0) == 64:
-        shank_channels = [c for c in range(np.size(row['Rc_response_by_channel'], 0)) if int(np.floor(c/32)) == int(np.floor(int(row['ch'])/32))]
+        shank_channels = [c for c in range(np.size(row['Rc_response_by_channel'], 0)) if int(np.floor(c/32)) == int(np.floor(int(row['FmLt_ch'])/32))]
         whole_shank = row['Rc_response_by_channel'][shank_channels]
         shank_num = [0 if np.max(shank_channels) < 40 else 1][0]
         colors = plt.cm.jet(np.linspace(0,1,32))
@@ -130,9 +133,9 @@ def revchecker_laminar_depth(ax, row, ind, data):
         ax.plot(whole_shank[row['Rc_layer4cent']], color=colors[row['Rc_layer4cent']], label='layer4', linewidth=1) # layer 4
     
     elif np.size(row['Rc_response_by_channel'],0) == 128:
-        shank_channels = [c for c in range(np.size(row['Rc_response_by_channel'], 0)) if int(np.floor(c/32)) == int(np.floor(int(row['ch'])/32))]
+        shank_channels = [c for c in range(np.size(row['Rc_response_by_channel'], 0)) if int(np.floor(c/32)) == int(np.floor(int(row['FmLt_ch'])/32))]
         whole_shank = row['Rc_response_by_channel'][shank_channels]
-        shank_num = int(np.floor(int(row['ch'])/32))
+        shank_num = int(np.floor(int(row['FmLt_ch'])/32))
         colors = plt.cm.jet(np.linspace(0,1,32))
         for ch_num in range(len(shank_channels)):
             ax.plot(whole_shank[ch_num], color=colors[ch_num], alpha=0.1, linewidth=1) # all other channels
@@ -140,75 +143,79 @@ def revchecker_laminar_depth(ax, row, ind, data):
     
     else:
         print('unrecognized probe count in LFP plots during unit summary! index='+str(ind))
-    row['ch'] = int(row['ch'])
-    ax.plot(row['Rc_response_by_channel'][row['ch']%32], color=colors[row['ch']%32], label='this channel', linewidth=4) # current channel
+    row['FmLt_ch'] = int(row['FmLt_ch'])
+    ax.plot(row['Rc_response_by_channel'][row['FmLt_ch']%32], color=colors[row['FmLt_ch']%32], label='this channel', linewidth=4) # current channel
     depth_to_layer4 = 0 # could be 350um, but currently, everything will stay relative to layer4 since we don't know angle of probe & other factors
-    if row['probe_name'] == 'DB_P64-8':
-        ch_spacing = 25/2
-    else:
-        ch_spacing = 25
+    # if row['probe_name'] == 'DB_P64-8':
+    #     ch_spacing = 25/2
+    # else:
+    ch_spacing = 25
     if shank_num == 0:
-        position_of_ch = int(row['Rc_relative_depth'][0][row['ch']])
+        position_of_ch = int(row['Rc_relative_depth'][0][row['FmLt_ch']])
         data.at[ind, 'Rc_ch_lfp_relative_depth'] = position_of_ch
         depth_from_surface = int(depth_to_layer4 + (ch_spacing * position_of_ch))
         data.at[ind, 'Rc_depth_from_layer4'] = depth_from_surface
-        ax.set_title('ch='+str(row['ch'])+'\npos='+str(position_of_ch)+'\ndist2layer4='+str(depth_from_surface), fontsize=20)
+        ax.set_title('ch='+str(row['FmLt_ch'])+'\npos='+str(position_of_ch)+'\ndist2layer4='+str(depth_from_surface), fontsize=20)
     elif shank_num == 1:
-        position_of_ch = int(row['Rc_relative_depth'][1][row['ch']-32])
+        position_of_ch = int(row['Rc_relative_depth'][1][row['FmLt_ch']-32])
         data.at[ind, 'Rc_ch_lfp_relative_depth'] = position_of_ch
         depth_from_surface = int(depth_to_layer4 + (ch_spacing * position_of_ch))
         data.at[ind, 'Rc_depth_from_layer4'] = depth_from_surface
-        ax.set_title('ch='+str(row['ch'])+'\npos='+str(position_of_ch)+'\ndist2layer4='+str(depth_from_surface), fontsize=20)
+        ax.set_title('ch='+str(row['FmLt_ch'])+'\npos='+str(position_of_ch)+'\ndist2layer4='+str(depth_from_surface), fontsize=20)
     elif shank_num == 2:
-        position_of_ch = int(row['Rc_relative_depth'][1][row['ch']-64])
+        position_of_ch = int(row['Rc_relative_depth'][1][row['FmLt_ch']-64])
         data.at[ind, 'Rc_ch_lfp_relative_depth'] = position_of_ch
         depth_from_surface = int(depth_to_layer4 + (ch_spacing * position_of_ch))
         data.at[ind, 'Rc_depth_from_layer4'] = depth_from_surface
-        ax.set_title('ch='+str(row['ch'])+'\npos='+str(position_of_ch)+'\ndist2layer4='+str(depth_from_surface), fontsize=20)
+        ax.set_title('ch='+str(row['FmLt_ch'])+'\npos='+str(position_of_ch)+'\ndist2layer4='+str(depth_from_surface), fontsize=20)
     elif shank_num == 3:
-        position_of_ch = int(row['Rc_relative_depth'][1][row['ch']-96])
+        position_of_ch = int(row['Rc_relative_depth'][1][row['FmLt_ch']-96])
         data.at[ind, 'Rc_ch_lfp_relative_depth'] = position_of_ch
         depth_from_surface = int(depth_to_layer4 + (ch_spacing * position_of_ch))
         data.at[ind, 'Rc_depth_from_layer4'] = depth_from_surface
-        ax.set_title('ch='+str(row['ch'])+'\npos='+str(position_of_ch)+'\ndist2layer4='+str(depth_from_surface), fontsize=20)
+        ax.set_title('ch='+str(row['FmLt_ch'])+'\npos='+str(position_of_ch)+'\ndist2layer4='+str(depth_from_surface), fontsize=20)
     ax.legend(); ax.axvline(x=(0.1*30000), color='k', linewidth=1)
     ax.set_xticks(np.arange(0,18000,18000/8))
     ax.set_xticklabels(np.arange(-100,500,75))
-    ax.set_xlabel('msec'); ax.set_ylabel('uvolts')
+    ax.set_xlabel('msec')
+    ax.set_ylabel('uvolts')
 
 
 def grat_psth(ax, row):
-    lower = -0.5; upper = 1.5; dt = 0.1
-    bins = np.arange(lower,upper+dt,dt)
-    psth = row['Gt_grating_psth']
-    ax.plot(bins[0:-1]+ dt/2,psth, color='k')
+
+    bins = np.linspace(-1.5, 1.5, 3001)
+
+    ax.plot(bins, row['Gt_stim_PSTH'], color='k')
     ax.set_title('gratings psth', fontsize=20)
     ax.set_xlabel('time')
     ax.set_ylabel('sp/sec')
-    ax.set_ylim([0,np.nanmax(psth)*1.2])
+    maxval = np.nanmax(row['Gt_stim_PSTH'])
+    if not np.isfinite(maxval):
+        maxval = 1
+    ax.set_ylim([0, maxval*1.2])
 
 
 def lfp_laminar_depth(ax, row, data, ind):
     power_profiles = row['Wn_lfp_power']
-    ch_shank = int(np.floor(row['ch']/32))
+    ch_shank = int(np.floor(row['FmLt_ch']/32))
     ch_shank_profile = power_profiles[ch_shank]
-    ch_power = ch_shank_profile[int(row['ch']%32)]
+    ch_power = ch_shank_profile[int(row['FmLt_ch']%32)]
     layer5cent = row['Wn_layer5cent_from_lfp'][ch_shank]
     
-    if row['probe_name'] == 'DB_P64-8':
-        ch_spacing = 25/2
-    else:
-        ch_spacing = 25
+    # if row['probe_name'] == 'DB_P64-8':
+    #     ch_spacing = 25/2
+    # else:
+    ch_spacing = 25
 
-    ch_depth = ch_spacing*(row['ch']%32)-(layer5cent*ch_spacing)
+    ch_depth = ch_spacing*(row['FmLt_ch']%32)-(layer5cent*ch_spacing)
     num_sites = 32
     ax.plot(ch_shank_profile,range(0,num_sites),color='k')
     ax.plot(ch_shank_profile[layer5cent]+0.01,layer5cent,'r*',markersize=12)
-    ax.hlines(y=row['ch']%32, xmin=ch_power, xmax=1, colors='g', linewidth=5)
+    ax.hlines(y=row['FmLt_ch']%32, xmin=ch_power, xmax=1, colors='g', linewidth=5)
     ax.set_ylim([33,-1])
     ax.set_yticks(list(range(-1,num_sites+1)))
     ax.set_yticklabels(ch_spacing*np.arange(num_sites+2)-(layer5cent*ch_spacing))
-    ax.set_title('shank='+str(ch_shank)+' site='+str(row['ch']%32)+'\n depth='+str(ch_depth), fontsize=20)
+    ax.set_title('shank='+str(ch_shank)+' site='+str(row['FmLt_ch']%32)+'\n depth='+str(ch_depth), fontsize=20)
     data.at[ind, 'Wn_depth_from_layer5'] = ch_depth
 
 
@@ -233,27 +240,22 @@ def stv(ax, row, stv_name, title):
 def movement_psth(ax, row, rightsacc, leftsacc, title, show_legend=False):
 
     cmap_sacc = ['steelblue','coral'] # [right, left]
-    model_dt = 0.025
-    trange = np.arange(-1, 1.1, model_dt)
-    trange_x = 0.5*(trange[0:-1]+ trange[1:])
+    bins = np.linspace(-1, 1, 2001)
 
-    rightavg = row[rightsacc]; leftavg = row[leftsacc]
+    rightavg = row[rightsacc]
+    leftavg = row[leftsacc]
     ax.set_title(title, fontsize=20)
-    modind_right = saccade_modulation_index(rightavg)
-    modind_left = saccade_modulation_index(leftavg)
-    ax.plot(trange_x, rightavg[:], color=cmap_sacc[0])
-    ax.annotate('0ms='+str(modind_right[0])+' 100ms='+str(modind_right[1]),
-                color=cmap_sacc[0], xy=(0.05, 0.95), xycoords='axes fraction', fontsize=15)
-    ax.plot(trange_x, leftavg[:], color=cmap_sacc[1])
-    ax.annotate('0ms='+str(modind_left[0])+' 100ms='+str(modind_left[1]),
-                color=cmap_sacc[1], xy=(0.05, 0.87), xycoords='axes fraction', fontsize=15)
+
+    ax.plot(bins, rightavg, color=cmap_sacc[0])
+
+    ax.plot(bins, leftavg, color=cmap_sacc[1])
+
     if show_legend:
         ax.legend(['right','left'], loc=1)
-    maxval = np.max(np.maximum(rightavg[:], leftavg[:]))*1.2
+    maxval = np.max(np.maximum(rightavg, leftavg))*1.2
+    if not np.isfinite(maxval):
+        maxval = 1
     ax.set_ylim([0, maxval])
-    ax.set_xlim([-0.5, 0.6])
-
-    return modind_right, modind_left
 
 
 def is_empty_index(data, attr, savekey):

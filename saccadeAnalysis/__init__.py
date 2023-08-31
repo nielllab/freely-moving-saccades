@@ -90,4 +90,30 @@ from .nn_figs.figS4 import figS4
 # from .nn_figs.figS6 import figS6
 # from .nn_figs.figS7 import figS7
 
+from .utils.unitsumm_helpers import (
+    tuning_modulation_index,
+    saccade_modulation_index,
+    waveform,
+    tuning_curve,
+    grat_stim_tuning,
+    revchecker_laminar_depth,
+    grat_psth,
+    lfp_laminar_depth,
+    sta,
+    stv,
+    movement_psth,
+    is_empty_index,
+    is_empty_cell
+)
 
+from .utils.unit_summary import (
+    summarize_units
+)
+
+from .utils.session_summary import (
+    summarize_sessions,
+    get_animal_activity
+)
+
+from .sessionSummary import sessionSummary
+from .unitSummary import unitSummary
