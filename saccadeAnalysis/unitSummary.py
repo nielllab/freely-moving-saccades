@@ -12,13 +12,10 @@ def unitSummary(data_filepath=None):
 
     if data_filepath is None:
 
-
-        data_filepath = '/home/dmartins/FastData/SC_dataset.h5'
-
-        # data_filepath = sg.popup_get_file('Select group h5 file',
-        #                                   keep_on_top=True,
-        #                                   file_types=(('H5 files', '*.h5'),),
-        #                                     no_window=True)
+        data_filepath = sg.popup_get_file('Select group h5 file',
+                                          keep_on_top=True,
+                                          file_types=(('H5 files', '*.h5'),),
+                                            no_window=True)
 
     savepath = os.path.split(data_filepath)[0]
 
