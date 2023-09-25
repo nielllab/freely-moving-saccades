@@ -25,6 +25,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
 
+import saccadeAnalysis as sacc
 import fmEphys as fme
 
 
@@ -102,7 +103,7 @@ def plot_columns(ax, df, prop, cat=None, cats=None,
 
         cdata = df[prop][df[cat]==c]
 
-        x_jitter = fme.plot.jitter(c_i, np.size(cdata,0))
+        x_jitter = sacc.jitter(c_i, np.size(cdata,0))
 
         ax.plot(x_jitter, cdata,
                 '.', color=colors[c], markersize=2)
@@ -113,12 +114,12 @@ def plot_columns(ax, df, prop, cat=None, cats=None,
         elif not use_median:
             hline = np.nanmean(cdata)
         
-        ax.hlines(hline, c-0.2, c+0.2,
+        ax.hlines(hline, c_i-0.2, c_i+0.2,
                   color='k', linewidth=2)
 
         err = fme.stderr(cdata)
         
-        ax.vlines(c, hline-err, hline+err,
+        ax.vlines(c_i, hline-err, hline+err,
                   color='k', linewidth=2)
         
     ax.set_xticks(range(len(cats)), cats)
