@@ -285,13 +285,17 @@ def make_hffm_dataset(savepath, session_dict=None, hffm_path=None,
     tseq_grat_tf = sorted_df['tf_pref_cps'][sorted_df['Gt_responsive']].copy().to_numpy()
     tseq_grat_sf = sorted_df['sf_pref_cpd'][sorted_df['Gt_responsive']].copy().to_numpy()
     
-    
-    # Stack with unresponsive cells.
-    # tseq_pref1 = np.vstack([tseq_pref, tseq_unresp_pref])
-    # tseq_nonpref1 = np.vstack([tseq_nonpref, tseq_unresp_nonpref])
-    # tseq_comp1 = np.vstack([tseq_comp, tseq_unresp_comp])
-    # tseq_rc1 = np.vstack([tseq_rc, tseq_unresp_rc])
-    # tseq_sn1 = np.vstack([tseq_sn, tseq_unresp_sn])
+    unsort_df = data[use_cols].copy()
+    gsrespinds_unsort = unsort_df[unsort_df['gazecluster']!='unresponsive'][unsort_df['gazeshift_responsive']==True].copy().index.values
+    rcrespinds_unsort = unsort_df[unsort_df['Rc_responsive']].copy().index.values
+    snrespinds_unsort = unsort_df[unsort_df['Sn_responsive']].copy().index.values
+    rcseq_unsort = fme.flatten_series(unsort_df['norm_Rc_psth'].copy())
+    snseq_unsort = fme.flatten_series(unsort_df['norm_Sn_psth'].copy())
+    gsseq_unsort = fme.flatten_series(unsort_df['pref_gazeshift_psth'].copy())
+    gsnonprefseq_unsort = fme.flatten_series(unsort_df['nonpref_gazeshift_psth'].copy())
+    compseq_unsort = fme.flatten_series(unsort_df['pref_comp_psth'].copy())
+    latency_unsort = unsort_df['FmLt_gazeshift_peakT'].copy().to_numpy()
+    gazecluster_unsort = unsort_df['gazecluster'].copy().to_numpy()
 
     props = sacc.propsdict()
     colors = props['colors']
@@ -312,7 +316,17 @@ def make_hffm_dataset(savepath, session_dict=None, hffm_path=None,
         'Fm_pref_temseq': tseq_pref,
         'Fm_nonpref_temseq': tseq_nonpref,
         'Fm_comp_temseq': tseq_comp,
-        'temseq_legend': tseq_legend
+        'temseq_legend': tseq_legend,
+        'Fm_pref_useinds_unsort': gsrespinds_unsort,
+        'Rc_useinds_unsort': rcrespinds_unsort,
+        'Sn_useinds_unsort': snrespinds_unsort,
+        'Rc_temseq_unsort': rcseq_unsort,
+        'Sn_temseq_unsort': snseq_unsort,
+        'Fm_pref_temseq_unsort': gsseq_unsort,
+        'Fm_nonpref_temseq_unsort': gsnonprefseq_unsort,
+        'Fm_comp_temseq_unsort': compseq_unsort,
+        'Fm_latency_unsort': latency_unsort,
+        'Fm_gazecluster_unsort': gazecluster_unsort,
     }
 
     return data, out
