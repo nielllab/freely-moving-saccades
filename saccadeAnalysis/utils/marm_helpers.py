@@ -4,6 +4,13 @@
 import numpy as np
 
 
+def marm_psth_modind(psth):
+
+    psth = psth.astype(float)
+    use = psth - np.mean(psth[0:150].copy())
+    mod = np.max(np.abs(use[200:]))
+    return mod
+
 
 def mRaster(ax, rast, n=500):
     # rasters for example units
@@ -45,7 +52,7 @@ def m_plot_tempseq(panel, tseq, return_img=False, freev=None):
         return img
     
 
-def normalize_psth(psth):
+def marm_normalize_psth(psth):
     pref = psth.copy()
     bsln = np.mean(psth[0:150]) # was -100 to -50 ms ; now, -200 to -50 ms
     norm_psth = (psth - bsln) / np.max(pref[200:]) # 0 to 200

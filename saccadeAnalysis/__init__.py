@@ -117,3 +117,12 @@ from .utils.session_summary import (
 
 from .sessionSummary import sessionSummary
 from .unitSummary import unitSummary
+
+from .utils.make_Marm import make_marm_dataset
+
+from .utils.marm_helpers import (
+    marm_psth_modind,
+    mRaster,
+    m_plot_tempseq,
+    marm_normalize_psth
+)
