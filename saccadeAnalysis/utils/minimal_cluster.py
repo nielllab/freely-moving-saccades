@@ -10,7 +10,7 @@ import saccadeAnalysis as sacc
 
 def apply_minimal_clustering(df_in, key, km_model=None, pca_model=None):
 
-    df = df_in.copy
+    df = df_in.copy()
 
     for ind, row in df.iterrows():
 
