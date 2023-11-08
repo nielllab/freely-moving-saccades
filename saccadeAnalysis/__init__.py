@@ -126,3 +126,6 @@ from .utils.marm_helpers import (
     m_plot_tempseq,
     marm_normalize_psth
 )
+
+from .utils.minimal_cluster import apply_minimal_clustering
+
