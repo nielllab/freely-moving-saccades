@@ -85,7 +85,7 @@ def apply_minimal_clustering(df_in, key, km_model=None, pca_model=None):
 
         # Name from user-generated dict
         
-        _n = fme.invert_dict(k_to_name)[_l]
+        _n = k_to_name[_l]
 
         df.at[ind, 'gazecluster'] = _n
 
