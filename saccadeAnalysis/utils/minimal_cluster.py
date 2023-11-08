@@ -21,6 +21,8 @@ def apply_minimal_clustering(df_in, key, km_model=None, pca_model=None):
         
         df.at[ind,'pref_gazeshift_direction'] = prefname
 
+        df.at[ind, 'pref_gazeshift_psth_raw'] = pref.astype(object)
+
         df.at[ind, 'pref_gazeshift_psth'] = sacc.norm_PSTH(
             psth = pref,
             trange = 'fm'
