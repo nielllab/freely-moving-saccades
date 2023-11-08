@@ -17,10 +17,11 @@ Written by DMM, 2022
 
 import pandas as pd
 import numpy as np
+import sys
 
-import fmEphys as fme
+sys.path.insert(0,r'c:\Users\Niell Lab\Documents\GitHub')
 import saccadeAnalysis as sacc
-
+import fmEphys as fme
 
 def add_stimuli_horizontally(df_list):
     """ Add stimuli for a single session horizontally.
