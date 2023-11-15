@@ -117,3 +117,5 @@ from .utils.session_summary import (
 
 from .sessionSummary import sessionSummary
 from .unitSummary import unitSummary
+
+from .utils.make_HfFm_lim import make_hffm_dataset_onlyFmRc
