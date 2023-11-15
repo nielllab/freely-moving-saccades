@@ -66,7 +66,7 @@ def make_cluster_model_input(data):
     return pca_input
 
 
-def make_clusters(pca_input, model_savepath):
+def make_clusters(pca_input, model_savepath=None):
     """ Create the clustering models and fit to data.
 
     Parameters
@@ -110,23 +110,25 @@ def make_clusters(pca_input, model_savepath):
     # Get the k-means labels
     labels = km.labels_
 
-    # Save the models
-    km_model_path = os.path.join(model_savepath,
-                                 'Gazeshift_KMeans_model_{}.pickle'.format(fme.fmt_now(c=True)))
-    with open(km_model_path, 'wb') as f:
-        pickle.dump(km, f)
+    if model_savepath is not None:
 
-    pca_model_path = os.path.join(model_savepath,
-                                 'Gazeshift_PCA_model_{}.pickle'.format(fme.fmt_now(c=True)))
-    with open(pca_model_path, 'wb') as f:
-        pickle.dump(pca, f)
+        # Save the models
+        km_model_path = os.path.join(model_savepath,
+                                    'Gazeshift_KMeans_model_{}.pickle'.format(fme.fmt_now(c=True)))
+        with open(km_model_path, 'wb') as f:
+            pickle.dump(km, f)
+
+        pca_model_path = os.path.join(model_savepath,
+                                    'Gazeshift_PCA_model_{}.pickle'.format(fme.fmt_now(c=True)))
+        with open(pca_model_path, 'wb') as f:
+            pickle.dump(pca, f)
     
     # Save the projection of cells into the PC space.
-    pca_proj_path = os.path.join(model_savepath,
-                                 'Gazeshift_PCA_projection_{}.npz'.format(fme.fmt_now(c=True)))
-    np.savez(file=pca_proj_path,
-             proj=proj, gproj=gproj, labels=labels,
-             pca_input=pca_input, explvar=explvar, keep_pcas=keep_pcas)
+        pca_proj_path = os.path.join(model_savepath,
+                                    'Gazeshift_PCA_projection_{}.npz'.format(fme.fmt_now(c=True)))
+        np.savez(file=pca_proj_path,
+                proj=proj, gproj=gproj, labels=labels,
+                pca_input=pca_input, explvar=explvar, keep_pcas=keep_pcas)
 
     _opt_outputs = {
         'proj': proj,
