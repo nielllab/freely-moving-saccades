@@ -25,7 +25,7 @@ def make_hffm_dataset_onlyFmRc(savepath, session_dict=None, hffm_path=None,
     data = sacc.get_norm_FmLt_PSTHs(data)
 
     # Normalize for head-fixed data.
-    data = sacc.get_norm_Hf_PSTHs(data)
+    data = sacc.get_norm_Hf_PSTHs(data, onlyRc=True)
 
 
     # Gazeshift latency
