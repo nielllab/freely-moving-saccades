@@ -17,7 +17,7 @@ def sessionSummary(data_filepath=None):
                                           file_types=(('H5 files', '*.h5'),),
                                             no_window=True)
 
-    data = fme.read_group_h5(data_filepath)
+    data = fme.read_group_h5(data_filepath)[0]
 
     savepath = os.path.split(data_filepath)[0]
 
