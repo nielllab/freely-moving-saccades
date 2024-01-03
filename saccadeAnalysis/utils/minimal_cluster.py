@@ -10,7 +10,7 @@ import saccadeAnalysis as sacc
 
 def apply_minimal_clustering(df_in, key, km_model=None, pca_model=None):
 
-    df = df_in.copy
+    df = df_in.copy()
 
     for ind, row in df.iterrows():
 
@@ -20,6 +20,8 @@ def apply_minimal_clustering(df_in, key, km_model=None, pca_model=None):
         )
         
         df.at[ind,'pref_gazeshift_direction'] = prefname
+
+        df.at[ind, 'pref_gazeshift_psth_raw'] = pref.astype(object)
 
         df.at[ind, 'pref_gazeshift_psth'] = sacc.norm_PSTH(
             psth = pref,
@@ -83,7 +85,7 @@ def apply_minimal_clustering(df_in, key, km_model=None, pca_model=None):
 
         # Name from user-generated dict
         
-        _n = fme.invert_dict(k_to_name)[_l]
+        _n = k_to_name[_l]
 
         df.at[ind, 'gazecluster'] = _n
 

@@ -108,11 +108,13 @@ def get_norm_FmDk_PSTHs(data):
 
     return data
 
-def get_norm_Hf_PSTHs(data):
+def get_norm_Hf_PSTHs(data, onlyRc=False):
 
     data = drop_if_missing(data, 'Rc_stim_PSTH')
-    data = drop_if_missing(data, 'Gt_stim_PSTH')
-    data = drop_if_missing(data, 'Sn_stim_PSTH_onSub_bckgndRF')
+
+    if not onlyRc:
+        data = drop_if_missing(data, 'Gt_stim_PSTH')
+        data = drop_if_missing(data, 'Sn_stim_PSTH_onSub_bckgndRF')
 
     
     for ind, row in data.iterrows():
@@ -123,17 +125,19 @@ def get_norm_Hf_PSTHs(data):
             trange = 'fm'
         ).astype(object)
         
-        # gratings
-        data.at[ind, 'norm_gratings_psth'] = sacc.norm_PSTH(
-            psth = row['Gt_stim_PSTH'],
-            trange = 'gt'
-        ).astype(object)
-        
-        # sparse noise
-        data.at[ind, 'norm_Sn_psth'] = sacc.norm_PSTH(
-            row['Sn_stim_PSTH_onSub_bckgndRF'],
-            trange = 'sn'
-        ).astype(object)
+        if not onlyRc:
+            
+            # gratings
+            data.at[ind, 'norm_gratings_psth'] = sacc.norm_PSTH(
+                psth = row['Gt_stim_PSTH'],
+                trange = 'gt'
+            ).astype(object)
+            
+            # sparse noise
+            data.at[ind, 'norm_Sn_psth'] = sacc.norm_PSTH(
+                row['Sn_stim_PSTH_onSub_bckgndRF'],
+                trange = 'sn'
+            ).astype(object)
 
     return data
 
