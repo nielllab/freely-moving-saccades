@@ -98,15 +98,15 @@ def summarize_units(data_filepath, use_pop_outputs=False):
 
         # laminar depth relative to cortex layer 5
         # based on whitenoise stim, but the data exist for all stim except for fm
-        fig_lfp_depth = fig.add_subplot(spec[6:8,4])
-        if row['has_hf']:
-            sacc.lfp_laminar_depth(
-                ax=fig_lfp_depth,
-                row=row,
-                data=data,
-                ind=ind)
-        else:
-            fig_lfp_depth.axis('off')
+        #fig_lfp_depth = fig.add_subplot(spec[6:8,4])
+        #if row['has_hf']:
+            #sacc.lfp_laminar_depth(
+                #ax=fig_lfp_depth,
+                #row=row,
+                #data=data,
+                #ind=ind)
+        #else:
+            #fig_lfp_depth.axis('off')
 
         # whitenoise sta
         fig_wn_sta = fig.add_subplot(spec[1,0])
