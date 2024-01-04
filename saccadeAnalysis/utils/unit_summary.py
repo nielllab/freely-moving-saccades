@@ -92,7 +92,7 @@ def summarize_units(data_filepath, use_pop_outputs=False):
                 #row=row,
                 #ind=ind,
                 #data=data
-                )
+                #)
         #else:
             #fig_revchecker_depth.axis('off')
 
