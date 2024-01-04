@@ -85,28 +85,28 @@ def summarize_units(data_filepath, use_pop_outputs=False):
 
         # laminar depth relative to cortex layer 4
         # based on revchecker stim
-        #fig_revchecker_depth = fig.add_subplot(spec[0,4])
-        #if row['has_hf']:
-           # sacc.revchecker_laminar_depth(
-           #     ax=fig_revchecker_depth,
-           #     row=row,
-           #     ind=ind,
-           #     data=data
+        fig_revchecker_depth = fig.add_subplot(spec[0,4])
+        if row['has_hf']:
+            sacc.revchecker_laminar_depth(
+                ax=fig_revchecker_depth,
+                row=row,
+                ind=ind,
+                data=data
                 )
-        #else:
-        #    fig_revchecker_depth.axis('off')
+        else:
+            fig_revchecker_depth.axis('off')
 
         # laminar depth relative to cortex layer 5
         # based on whitenoise stim, but the data exist for all stim except for fm
-        #fig_lfp_depth = fig.add_subplot(spec[6:8,4])
-        #if row['has_hf']:
-            #sacc.lfp_laminar_depth(
-           #     ax=fig_lfp_depth,
-           #     row=row,
-           #     data=data,
-           #     ind=ind)
-       # else:
-           # fig_lfp_depth.axis('off')
+        fig_lfp_depth = fig.add_subplot(spec[6:8,4])
+        if row['has_hf']:
+            sacc.lfp_laminar_depth(
+                ax=fig_lfp_depth,
+                row=row,
+                data=data,
+                ind=ind)
+        else:
+            fig_lfp_depth.axis('off')
 
         # whitenoise sta
         fig_wn_sta = fig.add_subplot(spec[1,0])
