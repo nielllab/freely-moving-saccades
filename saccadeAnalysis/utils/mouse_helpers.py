@@ -66,6 +66,7 @@ def get_norm_FmLt_PSTHs(data):
 
     return data
 
+
 def get_norm_FmDk_PSTHs(data):
     for ind, row in data.iterrows():
 
@@ -83,6 +84,10 @@ def get_norm_FmDk_PSTHs(data):
                                 row['nonpref_gazeshift_direction'])],
             rawpref = pref).astype(object)
         
+        # Option to add additional flag to name of PSTH key. Used to add '1' to end
+        # for some datasets. Leave blank here.
+        ap = ''
+
         # compensatory
         data.at[ind, 'pref_dark_comp_psth'] = sacc.norm_PSTH(
             psth = row['FmDk_comp_{}_saccPSTH_dHead{}'.format(
@@ -161,6 +166,7 @@ def FmLtDk_peak_time(data):
     # for ind, row in data.iterrows():
     #     if row['FmLt_gazeshift_peakT']<0.033:
     #         data.at[ind, 'movement'] = True
+    
     ### FmDk
     for ind, row in data.iterrows():
         raw_psth = row['pref_dark_gazeshift_psth_raw']
