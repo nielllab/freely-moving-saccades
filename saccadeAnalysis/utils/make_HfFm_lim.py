@@ -25,7 +25,7 @@ def make_hffm_dataset_onlyFmRc(savepath, session_dict=None, hffm_path=None,
     data = sacc.get_norm_FmLt_PSTHs(data)
 
     # Normalize for head-fixed data.
-    #data = sacc.get_norm_Hf_PSTHs(data, onlyRc=True)
+    data = sacc.get_norm_Hf_PSTHs(data, onlyRc=True)
 
 
     # Gazeshift latency
@@ -84,37 +84,37 @@ def make_hffm_dataset_onlyFmRc(savepath, session_dict=None, hffm_path=None,
     data = sacc.add_labels_to_dataset(data, labels, savepath)
 
     # Reversing checkerboard responsive
-    #for ind, row in data.iterrows():
+    for ind, row in data.iterrows():
 
-        #_end = row['Rc_eyeT'][-1].astype(float)
-        #_start = row['Rc_eyeT'][0].astype(float)
+        _end = row['Rc_eyeT'][-1].astype(float)
+        _start = row['Rc_eyeT'][0].astype(float)
 
-        #sp = len(row['Rc_spikeT'])
-        #data.at[ind, 'Rc_fr'] = sp / (_end - _start)
+        sp = len(row['Rc_spikeT'])
+        data.at[ind, 'Rc_fr'] = sp / (_end - _start)
 
-        #data.at[ind, 'raw_mod_for_Rc'] = sacc.calc_PSTH_modind(
+        data.at[ind, 'raw_mod_for_Rc'] = sacc.calc_PSTH_modind(
                                                     row['Rc_stim_PSTH'],
                                                     trange='fm')
 
-        #data.at[ind, 'norm_mod_for_Rc'] = sacc.calc_PSTH_modind(row['norm_Rc_psth'])
+        data.at[ind, 'norm_mod_for_Rc'] = sacc.calc_PSTH_modind(row['norm_Rc_psth'])
 
         # Latency
-        #Rc_peakT, Rc_peak_val = sacc.calc_PSTH_latency(row['norm_Rc_psth'])
-        #data.at[ind, 'rc_peakT'] = Rc_peakT
-        #data.at[ind, 'rc_peak_val'] = Rc_peak_val
+        Rc_peakT, Rc_peak_val = sacc.calc_PSTH_latency(row['norm_Rc_psth'])
+        data.at[ind, 'rc_peakT'] = Rc_peakT
+        data.at[ind, 'rc_peak_val'] = Rc_peak_val
 
-    #data['Rc_responsive'] = False
-    #for ind, row in data.iterrows():
-        #if (row['raw_mod_for_Rc']>1) and (row['norm_mod_for_Rc']>0.1):
-            #data.at[ind, 'Rc_responsive'] = True
+    data['Rc_responsive'] = False
+    for ind, row in data.iterrows():
+        if (row['raw_mod_for_Rc']>1) and (row['norm_mod_for_Rc']>0.1):
+            data.at[ind, 'Rc_responsive'] = True
 
     # Temporal sequences
-    #data.at[ind, 'rc_peakT'] = Rc_peakT
+    data.at[ind, 'rc_peakT'] = Rc_peakT
 
-    #use_cols = ['FmLt_gazeshift_peakT','gazecluster','pref_gazeshift_psth',
-                #'nonpref_gazeshift_psth','Rc_responsive',
-                #'pref_comp_psth','nonpref_comp_psth',
-                #'norm_Rc_psth','gazeshift_responsive']
+    use_cols = ['FmLt_gazeshift_peakT','gazecluster','pref_gazeshift_psth',
+                'nonpref_gazeshift_psth','Rc_responsive',
+                'pref_comp_psth','nonpref_comp_psth',
+                'norm_Rc_psth','gazeshift_responsive']
         
     sorted_df = data[use_cols].copy()
 
@@ -124,14 +124,14 @@ def make_hffm_dataset_onlyFmRc(savepath, session_dict=None, hffm_path=None,
     tseq_pref = fme.flatten_series(sorted_df['pref_gazeshift_psth'].copy())
     tseq_nonpref = fme.flatten_series(sorted_df['nonpref_gazeshift_psth'].copy())
     tseq_comp = fme.flatten_series(sorted_df['pref_comp_psth'].copy())
-    #tseq_rc = fme.flatten_series(sorted_df['norm_Rc_psth'][sorted_df['Rc_responsive']].copy())
+    tseq_rc = fme.flatten_series(sorted_df['norm_Rc_psth'][sorted_df['Rc_responsive']].copy())
     
     unsort_df = data[use_cols].copy()
     gsrespinds_unsort = unsort_df[unsort_df['gazecluster']!='unresponsive'][unsort_df['gazeshift_responsive']==True].copy().index.values
-    #rcrespinds_unsort = unsort_df[unsort_df['Rc_responsive']].copy().index.values
-    #rcseq_unsort = fme.flatten_series(unsort_df['norm_Rc_psth'].copy())
-    #gsseq_unsort = fme.flatten_series(unsort_df['pref_gazeshift_psth'].copy())
-    #gsnonprefseq_unsort = fme.flatten_series(unsort_df['nonpref_gazeshift_psth'].copy())
+    rcrespinds_unsort = unsort_df[unsort_df['Rc_responsive']].copy().index.values
+    rcseq_unsort = fme.flatten_series(unsort_df['norm_Rc_psth'].copy())
+    gsseq_unsort = fme.flatten_series(unsort_df['pref_gazeshift_psth'].copy())
+    gsnonprefseq_unsort = fme.flatten_series(unsort_df['nonpref_gazeshift_psth'].copy())
     compseq_unsort = fme.flatten_series(unsort_df['pref_comp_psth'].copy())
     latency_unsort = unsort_df['FmLt_gazeshift_peakT'].copy().to_numpy()
     gazecluster_unsort = unsort_df['gazecluster'].copy().to_numpy()
@@ -145,14 +145,14 @@ def make_hffm_dataset_onlyFmRc(savepath, session_dict=None, hffm_path=None,
         tseq_legend[i,:,:] = colors[n]
 
     out = {
-        #'Rc_temseq': tseq_rc,
+        'Rc_temseq': tseq_rc,
         'Fm_pref_temseq': tseq_pref,
         'Fm_nonpref_temseq': tseq_nonpref,
         'Fm_comp_temseq': tseq_comp,
         'temseq_legend': tseq_legend,
         'Fm_pref_useinds_unsort': gsrespinds_unsort,
-        #'Rc_useinds_unsort': rcrespinds_unsort,
-        #'Rc_temseq_unsort': rcseq_unsort,
+        'Rc_useinds_unsort': rcrespinds_unsort,
+        'Rc_temseq_unsort': rcseq_unsort,
         'Fm_pref_temseq_unsort': gsseq_unsort,
         'Fm_nonpref_temseq_unsort': gsnonprefseq_unsort,
         'Fm_comp_temseq_unsort': compseq_unsort,
