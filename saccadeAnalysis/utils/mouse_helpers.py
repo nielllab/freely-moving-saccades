@@ -66,7 +66,6 @@ def get_norm_FmLt_PSTHs(data):
 
     return data
 
-
 def get_norm_FmDk_PSTHs(data):
     for ind, row in data.iterrows():
 
@@ -84,10 +83,6 @@ def get_norm_FmDk_PSTHs(data):
                                 row['nonpref_gazeshift_direction'])],
             rawpref = pref).astype(object)
         
-        # Option to add additional flag to name of PSTH key. Used to add '1' to end
-        # for some datasets. Leave blank here.
-        ap = ''
-
         # compensatory
         data.at[ind, 'pref_dark_comp_psth'] = sacc.norm_PSTH(
             psth = row['FmDk_comp_{}_saccPSTH_dHead{}'.format(
@@ -113,36 +108,32 @@ def get_norm_FmDk_PSTHs(data):
 
     return data
 
-def get_norm_Hf_PSTHs(data, onlyRc=False):
+def get_norm_Hf_PSTHs(data):
 
     data = drop_if_missing(data, 'Rc_stim_PSTH')
-
-    if not onlyRc:
-        data = drop_if_missing(data, 'Gt_stim_PSTH')
-        data = drop_if_missing(data, 'Sn_stim_PSTH_onSub_bckgndRF')
+    data = drop_if_missing(data, 'Gt_stim_PSTH')
+    data = drop_if_missing(data, 'Sn_stim_PSTH_onSub_bckgndRF')
 
     
     for ind, row in data.iterrows():
 
         # reversing checkerboard
-        data.at[ind, 'norm_Rc_psth'] = sacc.norm_PSTH(
-            psth = row['Rc_stim_PSTH'],
-            trange = 'fm'
-        ).astype(object)
+        #data.at[ind, 'norm_Rc_psth'] = sacc.norm_PSTH(
+            #psth = row['Rc_stim_PSTH'],
+            #trange = 'fm'
+        #).astype(object)
         
-        if not onlyRc:
-            
-            # gratings
-            data.at[ind, 'norm_gratings_psth'] = sacc.norm_PSTH(
-                psth = row['Gt_stim_PSTH'],
-                trange = 'gt'
-            ).astype(object)
-            
-            # sparse noise
-            data.at[ind, 'norm_Sn_psth'] = sacc.norm_PSTH(
-                row['Sn_stim_PSTH_onSub_bckgndRF'],
-                trange = 'sn'
-            ).astype(object)
+        # gratings
+       #data.at[ind, 'norm_gratings_psth'] = sacc.norm_PSTH(
+         #   psth = row['Gt_stim_PSTH'],
+          #  trange = 'gt'
+        #).astype(object)
+        
+        # sparse noise
+        #data.at[ind, 'norm_Sn_psth'] = sacc.norm_PSTH(
+            #row['Sn_stim_PSTH_onSub_bckgndRF'],
+            #trange = 'sn'
+        #).astype(object)
 
     return data
 
@@ -166,7 +157,6 @@ def FmLtDk_peak_time(data):
     # for ind, row in data.iterrows():
     #     if row['FmLt_gazeshift_peakT']<0.033:
     #         data.at[ind, 'movement'] = True
-    
     ### FmDk
     for ind, row in data.iterrows():
         raw_psth = row['pref_dark_gazeshift_psth_raw']
