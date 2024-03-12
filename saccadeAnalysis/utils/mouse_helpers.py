@@ -117,7 +117,7 @@ def get_norm_Hf_PSTHs(data):
     
     for ind, row in data.iterrows():
 
-        reversingcheckerboard
+        reversing checkerboard
         data.at[ind, 'norm_Rc_psth'] = sacc.norm_PSTH(
             psth = row['Rc_stim_PSTH'],
             trange = 'fm'
@@ -129,7 +129,7 @@ def get_norm_Hf_PSTHs(data):
           #  trange = 'gt'
         #).astype(object)
         
-        sparsenoise
+        sparse noise
         data.at[ind, 'norm_Sn_psth'] = sacc.norm_PSTH(
             row['Sn_stim_PSTH_onSub_bckgndRF'],
             trange = 'sn'
