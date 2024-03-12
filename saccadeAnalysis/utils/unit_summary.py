@@ -447,56 +447,51 @@ def summarize_units(data_filepath, use_pop_outputs=False):
             sacc.movement_psth(ax=fig_fmdark_gaze_dEye,
                                     rightsacc='FmDk_rightsacc_avg_gaze_shift_dEye',
                                     leftsacc='FmDk_leftsacc_avg_gaze_shift_dEye',
-                                    title='FmDk gaze shift dEye',
-                                    row=row)
-            # data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dEye_modind_t0'] = fmdark_gaze_dEye_right_modind[0]
-            # data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dEye_modind_t0'] = fmdark_gaze_dEye_left_modind[0]
-            # data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dEye_modind_t100'] = fmdark_gaze_dEye_right_modind[1]
-            # data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dEye_modind_t100'] = fmdark_gaze_dEye_left_modind[1]
+                                    title='FmDk gaze shift dEye')
+            data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dEye_modind_t0'] = fmdark_gaze_dEye_right_modind[0]
+            data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dEye_modind_t0'] = fmdark_gaze_dEye_left_modind[0]
+            data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dEye_modind_t100'] = fmdark_gaze_dEye_right_modind[1]
+            data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dEye_modind_t100'] = fmdark_gaze_dEye_left_modind[1]
             
             # fm dark comp dEye psth
-            sacc.movement_psth(ax=fig_fmdark_comp_dEye,
+            acc.movement_psth(ax=fig_fmdark_comp_dEye,
                                     rightsacc='FmDk_rightsacc_avg_comp_dEye',
                                     leftsacc='FmDk_leftsacc_avg_comp_dEye',
-                                    title='FmDk comp dEye',
-                                    row=row)
-            # data.at[ind, 'FmDk_rightsacc_avg_comp_dEye_modind_t0'] = fmdark_comp_dEye_right_modind[0]
-            # data.at[ind, 'FmDk_leftsacc_avg_comp_dEye_modind_t0'] = fmdark_comp_dEye_left_modind[0]
-            # data.at[ind, 'FmDk_rightsacc_avg_comp_dEye_modind_t100'] = fmdark_comp_dEye_right_modind[1]
-            # data.at[ind, 'FmDk_leftsacc_avg_comp_dEye_modind_t100'] = fmdark_comp_dEye_left_modind[1]
+                                    title='FmDk comp dEye')
+            data.at[ind, 'FmDk_rightsacc_avg_comp_dEye_modind_t0'] = fmdark_comp_dEye_right_modind[0]
+            data.at[ind, 'FmDk_leftsacc_avg_comp_dEye_modind_t0'] = fmdark_comp_dEye_left_modind[0]
+            data.at[ind, 'FmDk_rightsacc_avg_comp_dEye_modind_t100'] = fmdark_comp_dEye_right_modind[1]
+            data.at[ind, 'FmDk_leftsacc_avg_comp_dEye_modind_t100'] = fmdark_comp_dEye_left_modind[1]
 
             # fm dark gaze shift dHead psth
             sacc.movement_psth(ax=fig_fmdark_gaze_dHead,
                                     rightsacc='FmDk_rightsacc_avg_gaze_shift_dHead',
                                     leftsacc='FmDk_leftsacc_avg_gaze_shift_dHead',
-                                    title='FmDk gaze shift dHead',
-                                    row=row)
-            # data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dHead_modind_t0'] = fmdark_gaze_dHead_right_modind[0]
-            # data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dHead_modind_t0'] = fmdark_gaze_dHead_left_modind[0]
-            # data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dHead_modind_t100'] = fmdark_gaze_dHead_right_modind[1]
-            # data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dHead_modind_t100'] = fmdark_gaze_dHead_left_modind[1]
+                                    title='FmDk gaze shift dHead')
+            data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dHead_modind_t0'] = fmdark_gaze_dHead_right_modind[0]
+            data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dHead_modind_t0'] = fmdark_gaze_dHead_left_modind[0]
+            data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dHead_modind_t100'] = fmdark_gaze_dHead_right_modind[1]
+            data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dHead_modind_t100'] = fmdark_gaze_dHead_left_modind[1]
             
             # fm dark comp dHead psth
             sacc.movement_psth(ax=fig_fmdark_comp_dHead,
                                     rightsacc='FmDk_rightsacc_avg_comp_dHead',
                                     leftsacc='FmDk_leftsacc_avg_comp_dHead',
-                                    title='FmDk comp dHead',
-                                    row=row)
-            # data.at[ind, 'FmDk_rightsacc_avg_comp_dHead_modind_t0'] = fmdark_comp_dHead_right_modind[0]
-            # data.at[ind, 'FmDk_leftsacc_avg_comp_dHead_modind_t0'] = fmdark_comp_dHead_left_modind[0]
-            # data.at[ind, 'FmDk_rightsacc_avg_comp_dHead_modind_t100'] = fmdark_comp_dHead_right_modind[1]
-            # data.at[ind, 'FmDk_leftsacc_avg_comp_dHead_modind_t100'] = fmdark_comp_dHead_left_modind[1]
+                                    title='FmDk comp dHead')
+            data.at[ind, 'FmDk_rightsacc_avg_comp_dHead_modind_t0'] = fmdark_comp_dHead_right_modind[0]
+            data.at[ind, 'FmDk_leftsacc_avg_comp_dHead_modind_t0'] = fmdark_comp_dHead_left_modind[0]
+            data.at[ind, 'FmDk_rightsacc_avg_comp_dHead_modind_t100'] = fmdark_comp_dHead_right_modind[1]
+            data.at[ind, 'FmDk_leftsacc_avg_comp_dHead_modind_t100'] = fmdark_comp_dHead_left_modind[1]
 
             # fm dark all dEye psth
             sacc.movement_psth(ax=fig_fmdark_all_dEye,
                                     rightsacc='FmDk_rightsacc_avg',
                                     leftsacc='FmDk_leftsacc_avg',
-                                    title='FmDk all dEye',
-                                    row=row)
-            # data.at[ind, 'FmDk_rightsacc_modind_t0'] = fmdark_all_dEye_right_modind[0]
-            # data.at[ind, 'FmDk_leftsacc_modind_t0'] = fmdark_all_dEye_left_modind[0]
-            # data.at[ind, 'FmDk_rightsacc_modind_t100'] = fmdark_all_dEye_right_modind[1]
-            # data.at[ind, 'FmDk_leftsacc_modind_t100'] = fmdark_all_dEye_left_modind[1]
+                                    title='FmDk all dEye')
+            data.at[ind, 'FmDk_rightsacc_modind_t0'] = fmdark_all_dEye_right_modind[0]
+            data.at[ind, 'FmDk_leftsacc_modind_t0'] = fmdark_all_dEye_left_modind[0]
+            data.at[ind, 'FmDk_rightsacc_modind_t100'] = fmdark_all_dEye_right_modind[1]
+            data.at[ind, 'FmDk_leftsacc_modind_t100'] = fmdark_all_dEye_left_modind[1]
 
             # fm dark pupil radius tuning
             fmdark_pupilradius_modind = sacc.tuning_curve(ax=fig_fmdark_pupilradius_tuning,
