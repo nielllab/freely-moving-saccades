@@ -9,6 +9,7 @@ import fmEphys as fme
 import saccadeAnalysis as sacc
 
 
+
 def sessionSummary(data_filepath=None):
 
     if data_filepath is None:
@@ -17,7 +18,7 @@ def sessionSummary(data_filepath=None):
                                           file_types=(('H5 files', '*.h5'),),
                                             no_window=True)
 
-    data = fme.read_group_h5(data_filepath)[0]
+    data = fme.read_group_h5(data_filepath)
 
     savepath = os.path.split(data_filepath)[0]
 
