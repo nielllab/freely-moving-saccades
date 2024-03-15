@@ -73,6 +73,9 @@ def make_ltdk_dataset(savepath, session_dict=None, ltdk_path=None,
         print('Reading LtDk dataset.')
         data = fme.read_group_h5(ltdk_path)
 
+    # First, run analysis on freely moving light condition
+    data = sacc.get_norm_FmLt_PSTHs(data)
+
     # Normalize PSTHs
     data = sacc.get_norm_FmDk_PSTHs(data)
 
