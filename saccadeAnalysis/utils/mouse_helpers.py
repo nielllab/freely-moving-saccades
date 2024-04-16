@@ -8,8 +8,6 @@ import saccadeAnalysis as sacc
 
 def get_norm_FmLt_PSTHs(data):
 
-    # append str
-    # ap = '1'
     ap = ''
 
     for ind, row in data.iterrows():
@@ -70,7 +68,7 @@ def get_norm_FmLt_PSTHs(data):
 def get_norm_FmDk_PSTHs(data):
     for ind, row in data.iterrows():
 
-        pref = row['FmLt_gazeshift_{}_saccPSTH_dHead{}'.format(
+        pref = row['FmDk_gazeshift_{}PSTH'.format(
                                 row['pref_gazeshift_direction'])]
         
         # gaze shifts
@@ -80,7 +78,7 @@ def get_norm_FmDk_PSTHs(data):
         ).astype(object)
 
         data.at[ind, 'nonpref_dark_gazeshift_psth'] = sacc.norm_PSTH(
-            psth = row['FmDk_gazeshift_{}_saccPSTH_dHead{}'.format(
+            psth = row['FmDk_gazeshift_{}PSTH'.format(
                                 row['nonpref_gazeshift_direction'])],
             rawpref = pref).astype(object)
         
@@ -90,25 +88,25 @@ def get_norm_FmDk_PSTHs(data):
 
         # compensatory
         data.at[ind, 'pref_dark_comp_psth'] = sacc.norm_PSTH(
-            psth = row['FmDk_comp_{}_saccPSTH_dHead{}'.format(
+            psth = row['FmDk_compensatory_{}PSTH'.format(
                         row['pref_gazeshift_direction'], ap)],
             rawpref = pref).astype(object)
         
         data.at[ind, 'nonpref_dark_comp_psth'] = sacc.norm_PSTH(
-            psth = row['FmDk_comp_{}_saccPSTH_dHead{}'.format(
+            psth = row['FmDk_compensatory_{}PSTH'.format(
             row['nonpref_gazeshift_direction'], ap)],
             rawpref = pref).astype(object)
         
         # raw gaze shifts
-        data.at[ind, 'pref_dark_gazeshift_psth_raw'] = row['FmDk_gazeshift_{}_saccPSTH_dHead{}'.format(
+        data.at[ind, 'pref_dark_gazeshift_psth_raw'] = row['FmDk_gazeshift_{}PSTH'.format(
                                                     row['pref_gazeshift_direction'], ap)].astype(object)
-        data.at[ind, 'nonpref_dark_gazeshift_psth_raw'] = row['FmDk_gazeshift_{}_saccPSTH_dHead{}'.format(
+        data.at[ind, 'nonpref_dark_gazeshift_psth_raw'] = row['FmDk_gazeshift_{}PSTH'.format(
                                                     row['nonpref_gazeshift_direction'], ap)].astype(object)
         
         # compensatory
-        data.at[ind, 'pref_dark_comp_psth_raw'] = row['FmDk_comp_{}_saccPSTH_dHead{}'.format(
+        data.at[ind, 'pref_dark_comp_psth_raw'] = row['FmDk_compensatory_{}PSTH'.format(
                                                     row['pref_gazeshift_direction'], ap)].astype(object)
-        data.at[ind, 'nonpref_dark_comp_psth_raw'] = row['FmDk_comp_{}_saccPSTH_dHead{}'.format(
+        data.at[ind, 'nonpref_dark_comp_psth_raw'] = row['FmDk_compensatory_{}PSTH'.format(
                                                     row['nonpref_gazeshift_direction'], ap)].astype(object)
 
     return data

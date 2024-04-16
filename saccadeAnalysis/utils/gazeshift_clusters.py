@@ -141,7 +141,7 @@ def make_clusters(pca_input, model_savepath=None):
     return labels, _opt_outputs
 
 
-def add_labels_to_dataset(data, labels, savepath):
+def add_labels_to_dataset(data, labels, savepath, get_user_feedback=False):
     """ Add the cluster labels to the dataset object.
 
     Parameters
@@ -192,18 +192,28 @@ def add_labels_to_dataset(data, labels, savepath):
     fig.show()
 
     # Get user-input to assign labels
-    name_opts = ['early','late','biphasic','negative','unresponsive']
+    if get_user_feedback:
+        name_opts = ['early','late','biphasic','negative','unresponsive']
 
-    k_to_name = dict(zip(name_opts, list(np.zeros(6)*np.nan)))
+        k_to_name = dict(zip(name_opts, list(np.zeros(6)*np.nan)))
 
-    for _name in name_opts:
-        
-        # Get manual label
-        manlab = sg.popup_get_text('Which index is k= {} ?'.format(_name),
-                                title='Cluster labeling')
-        
-        # Save label
-        k_to_name[_name] = int(manlab)
+        for _name in name_opts:
+            
+            # Get manual label
+            manlab = sg.popup_get_text('Which index is k= {} ?'.format(_name),
+                                    title='Cluster labeling')
+            
+            # Save label
+            k_to_name[_name] = int(manlab)
+
+    elif get_user_feedback is False:
+        k_to_name = {
+            'early': 3,
+            'late': 2,
+            'biphasic': 1,
+            'negative': 4,
+            'unresponsive': 0
+        }
 
     # Assign labels with str names
     for i, ind in enumerate(data.index.values):

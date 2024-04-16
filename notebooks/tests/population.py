@@ -567,7 +567,7 @@ class Population:
         return modind_right, modind_left
 
     def is_empty_index(self, attr, savekey):
-        for ind, val in self.data[attr].iteritems():
+        for ind, val in self.data[attr].items():
             self.data.at[ind, savekey] = (True if ~np.isnan(val).all() else False)
 
     def is_empty_cell(self, row, name):
@@ -1689,7 +1689,7 @@ class Population:
         if np.sum(self.data['has_hf'])>1:
             self.depth_range = [np.max(self.data['Wn_depth_from_layer5'][self.data['responsive_to_contrast']==True])+50, np.min(self.data['Wn_depth_from_layer5'][self.data['responsive_to_contrast']==True])+50]
 
-        for i, x in self.data['Wn_contrast_tuning'].iteritems():
+        for i, x in self.data['Wn_contrast_tuning'].items():
             if type(x) == str:
                 x = np.array([np.nan if i=='nan' else i for i in list(x.split(' ')[1:-2])])
             if type(x) != float:

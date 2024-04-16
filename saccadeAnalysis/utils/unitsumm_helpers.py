@@ -259,7 +259,7 @@ def movement_psth(ax, row, rightsacc, leftsacc, title, show_legend=False):
 
 
 def is_empty_index(data, attr, savekey):
-    for ind, val in data[attr].iteritems():
+    for ind, val in data[attr].items():
         data.at[ind, savekey] = (True if ~np.isnan(val).all() else False)
 
 
