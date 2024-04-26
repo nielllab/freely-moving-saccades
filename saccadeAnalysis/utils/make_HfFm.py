@@ -18,7 +18,7 @@ def make_hffm_dataset(savepath, session_dict=None, hffm_path=None,
     
     if hffm_path is None and session_dict is not None:
         print('Creating HfFm dataset.')
-        data = sacc.create_dataset(session_dict, _saveas)
+        data = sacc.stack_dataset(session_dict, _saveas)
 
     if hffm_path is not None and session_dict is None:
         print('Reading HfFm dataset.')
@@ -65,7 +65,6 @@ def make_hffm_dataset(savepath, session_dict=None, hffm_path=None,
 
         if (row['raw_mod_at_pref_peak'] > 1) and (row['norm_mod_at_pref_peak'] > 0.1):
             data.at[ind, 'gazeshift_responsive'] = True
-
 
 
     # Format inputs for clustering
@@ -173,7 +172,7 @@ def make_hffm_dataset(savepath, session_dict=None, hffm_path=None,
     for sf in ['low','mid','high']:
         data['norm_ori_tuning_'+sf] = data['Gt_ori_tuning_tf'].copy().astype(object)
     for ind, row in data.iterrows():
-        orientations = np.nanmean(np.array(row['Gt_ori_tuning_tf'], dtype=np.float),2)
+        orientations = np.nanmean(np.array(row['Gt_ori_tuning_tf'], dtype=float),2)
         for sfnum in range(3):
             sf = ['low','mid','high'][sfnum]
             data.at[ind,'norm_ori_tuning_'+sf] = orientations[:,sfnum] - row['Gt_drift_spont']
@@ -328,6 +327,15 @@ def make_hffm_dataset(savepath, session_dict=None, hffm_path=None,
         'Fm_latency_unsort': latency_unsort,
         'Fm_gazecluster_unsort': gazecluster_unsort,
     }
+
+    arrsavepath =  os.path.join(savepath,
+        'HfFm_resp_arrays_{}.h5'.format(fme.fmt_now(c=True)))
+    fme.write_h5(arrsavepath, out)
+
+    _saveas = os.path.join(savepath,
+                           'HfFm_processed_dataset_{}.h5'.format(fme.fmt_now(c=True)))
+    fme.write_group_h5(data, _saveas)
+
 
     return data, out
 

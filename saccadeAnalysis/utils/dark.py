@@ -66,18 +66,43 @@ def make_ltdk_dataset(savepath, session_dict=None, ltdk_path=None,
     # Read individual HDF files and make a new LtDk dataset.
     if ltdk_path is None and session_dict is not None:
         print('Creating LtDk dataset.')
-        data = sacc.create_dataset(session_dict, _saveas)
+        data = sacc.stack_dataset(session_dict, _saveas)
 
     # OR: Read a pre-existing LtDk dataset.
     if ltdk_path is not None and session_dict is None:
         print('Reading LtDk dataset.')
         data = fme.read_group_h5(ltdk_path)
 
+    # First, run analysis on freely moving light condition
+    data = sacc.get_norm_FmLt_PSTHs(data)
+
     # Normalize PSTHs
     data = sacc.get_norm_FmDk_PSTHs(data)
 
     # Calculate latencies
     data = sacc.FmLtDk_peak_time(data)
+
+    # Determine gazeshift responsive cells (using light condition)
+    for ind, row in data.iterrows():
+
+        # firing rate
+        sec = row['FmLt_eyeT'][-1].astype(float) - row['FmLt_eyeT'][0].astype(float)
+        sp = len(row['FmLt_spikeT'])
+        fm_fr = sp/sec
+        data.at[ind, 'Fm_fr'] = fm_fr
+        
+        raw_psth = row['pref_gazeshift_psth_raw']
+        data.at[ind, 'raw_mod_at_pref_peak'] = sacc.calc_PSTH_modind(raw_psth)
+        
+        norm_psth = row['pref_gazeshift_psth']
+        data.at[ind, 'norm_mod_at_pref_peak'] = sacc.calc_PSTH_modind(norm_psth)
+
+    data['gazeshift_responsive'] = False
+    
+    for ind, row in data.iterrows():
+
+        if (row['raw_mod_at_pref_peak'] > 1) and (row['norm_mod_at_pref_peak'] > 0.1):
+            data.at[ind, 'gazeshift_responsive'] = True
 
     # Plotting props
     sacc.set_plt_params()
@@ -101,16 +126,16 @@ def make_ltdk_dataset(savepath, session_dict=None, ltdk_path=None,
         norm_psth = row['pref_dark_gazeshift_psth'].copy().astype(float)
         data.at[ind, 'norm_dark_modulation'] = sacc.calc_PSTH_modind(norm_psth)
         
-        raw_psth = row['FmDk_gazeshift_{}_saccPSTH_dHead'.format(row['pref_gazeshift_direction'])].copy().astype(float)
+        raw_psth = row['FmDk_gazeshift_{}PSTH'.format(row['pref_gazeshift_direction'])].copy().astype(float)
         data.at[ind, 'dark_modulation'] = sacc.calc_PSTH_modind(raw_psth)
 
     plotvals = data[data['gazeshift_responsive']][data['gazecluster_ind']!=4].copy()
 
-    light_pref = row['FmLt_gazeshift_{}_saccPSTH_dHead'.format(row['pref_gazeshift_direction'])]
-    light_nonpref = row['FmLt_gazeshift_{}_saccPSTH_dHead'.format(row['nonpref_gazeshift_direction'])]
+    light_pref = row['FmLt_gazeshift_{}PSTH'.format(row['pref_gazeshift_direction'])]
+    light_nonpref = row['FmLt_gazeshift_{}PSTH'.format(row['nonpref_gazeshift_direction'])]
 
-    dark_pref = row['FmDk_gazeshift_{}_saccPSTH_dHead'.format(row['pref_gazeshift_direction'])]
-    dark_nonpref = row['FmDk_gazeshift_{}_saccPSTH_dHead'.format(row['nonpref_gazeshift_direction'])]
+    dark_pref = row['FmDk_gazeshift_{}PSTH'.format(row['pref_gazeshift_direction'])]
+    dark_nonpref = row['FmDk_gazeshift_{}PSTH'.format(row['nonpref_gazeshift_direction'])]
 
     for ind in plotvals.index.values:
         
@@ -193,7 +218,7 @@ def make_ltdk_dataset(savepath, session_dict=None, ltdk_path=None,
         data.at[ind, 'FmLt_gazeshift_peakT'] = Lt_peakT
 
     for ind in data.index.values:
-        sorted_df = data[['FmLt_gazeshift_peakT','FmDk_gazeshift_peakT','FmLt_gazeshift_troughT','FmDk_gazeshift_troughT','gazecluster',
+        sorted_df = data[['FmLt_gazeshift_peakT','FmDk_gazeshift_peakT','gazecluster',
                                 'pref_gazeshift_psth','pref_dark_gazeshift_psth','nonpref_dark_gazeshift_psth','gazeshift_responsive',
                                 'pref_dark_comp_psth']].copy()
 
@@ -284,7 +309,15 @@ def make_ltdk_dataset(savepath, session_dict=None, ltdk_path=None,
 
         'tseq_legend': tseq_legend,
         'tseq_legend_w_unresp': tseq_legend1
-
     }
+
+    arrsavepath =  os.path.join(savepath,
+        'LtDk_resp_arrays_{}.h5'.format(fme.fmt_now(c=True)))
+    fme.write_h5(arrsavepath, out)
+
+
+    _saveas = os.path.join(savepath,
+        'LtDk_processed_dataset_{}.h5'.format(fme.fmt_now(c=True)))
+    fme.write_group_h5(data, _saveas)
 
     return data, out

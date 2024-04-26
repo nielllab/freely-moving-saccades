@@ -414,133 +414,144 @@ def summarize_units(data_filepath, use_pop_outputs=False):
 
         elif row['has_dark']:
             # fm dark gyro z tuning curve
-            fmdark_gyro_z_tuning_modind = sacc.tuning_curve(ax=fig_fmdark_gyro_z_tuning,
-                                                            row=row,
-                                    varcent_name='FmDk_gyroz_tuning_bins',
-                                    tuning_name='FmDk_gyroz_tuning',
-                                    err_name='FmDk_gyroz_tuning_err',
-                                    title='FmDk gyro z',
-                                    xlabel='deg/sec')
+            fmdark_gyro_z_tuning_modind = sacc.tuning_curve(
+                ax=fig_fmdark_gyro_z_tuning,
+                row=row,
+                varcent_name='FmDk_gyroz_tuning_bins',
+                tuning_name='FmDk_gyroz_tuning',
+                err_name='FmDk_gyroz_tuning_err',
+                title='FmDk gyro z',
+                xlabel='deg/sec'
+            )
             data.at[ind, 'FmDk_gyroz_modind'] = fmdark_gyro_z_tuning_modind
 
             # fm dark gyro x tuning curve
-            fmdark_gyro_x_tuning_modind = sacc.tuning_curve(ax=fig_fmdark_gyro_x_tuning,
-                                                            row=row,
-                                    varcent_name='FmDk_gyrox_tuning_bins',
-                                    tuning_name='FmDk_gyrox_tuning',
-                                    err_name='FmDk_gyrox_tuning_err',
-                                    title='FmDk gyro x',
-                                    xlabel='deg/sec')
+            fmdark_gyro_x_tuning_modind = sacc.tuning_curve(
+                ax=fig_fmdark_gyro_x_tuning,
+                row=row,
+                varcent_name='FmDk_gyrox_tuning_bins',
+                tuning_name='FmDk_gyrox_tuning',
+                err_name='FmDk_gyrox_tuning_err',
+                title='FmDk gyro x',
+                xlabel='deg/sec'
+            )
             data.at[ind, 'FmDk_gyrox_modind'] = fmdark_gyro_x_tuning_modind
 
             # fm dark gyro y tuning curve
-            fmdark_gyro_y_tuning_modind = sacc.tuning_curve(ax=fig_fmdark_gyro_y_tuning,
-                                                            row=row,
-                                    varcent_name='FmDk_gyroy_tuning_bins',
-                                    tuning_name='FmDk_gyroy_tuning',
-                                    err_name='FmDk_gyroy_tuning_err',
-                                    title='FmDk gyro y',
-                                    xlabel='deg/sec')
+            fmdark_gyro_y_tuning_modind = sacc.tuning_curve(
+                ax=fig_fmdark_gyro_y_tuning,
+                row=row,
+                varcent_name='FmDk_gyroy_tuning_bins',
+                tuning_name='FmDk_gyroy_tuning',
+                err_name='FmDk_gyroy_tuning_err',
+                title='FmDk gyro y',
+                xlabel='deg/sec'
+            )
             data.at[ind, 'FmDk_gyroy_modind'] = fmdark_gyro_y_tuning_modind
 
             # fm dark gaze shift dEye psth
-            sacc.movement_psth(ax=fig_fmdark_gaze_dEye,
-                                    rightsacc='FmDk_rightsacc_avg_gaze_shift_dEye',
-                                    leftsacc='FmDk_leftsacc_avg_gaze_shift_dEye',
-                                    title='FmDk gaze shift dEye')
-            data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dEye_modind_t0'] = fmdark_gaze_dEye_right_modind[0]
-            data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dEye_modind_t0'] = fmdark_gaze_dEye_left_modind[0]
-            data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dEye_modind_t100'] = fmdark_gaze_dEye_right_modind[1]
-            data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dEye_modind_t100'] = fmdark_gaze_dEye_left_modind[1]
-            
+            sacc.movement_psth(
+                ax=fig_fmdark_gaze_dEye,
+                row=row,
+                rightsacc='FmDk_rightsacc_avg_gaze_shift_dEye',
+                leftsacc='FmDk_leftsacc_avg_gaze_shift_dEye',
+                title='FmDk gaze shift dEye'
+            )
+
             # fm dark comp dEye psth
-            acc.movement_psth(ax=fig_fmdark_comp_dEye,
-                                    rightsacc='FmDk_rightsacc_avg_comp_dEye',
-                                    leftsacc='FmDk_leftsacc_avg_comp_dEye',
-                                    title='FmDk comp dEye')
-            data.at[ind, 'FmDk_rightsacc_avg_comp_dEye_modind_t0'] = fmdark_comp_dEye_right_modind[0]
-            data.at[ind, 'FmDk_leftsacc_avg_comp_dEye_modind_t0'] = fmdark_comp_dEye_left_modind[0]
-            data.at[ind, 'FmDk_rightsacc_avg_comp_dEye_modind_t100'] = fmdark_comp_dEye_right_modind[1]
-            data.at[ind, 'FmDk_leftsacc_avg_comp_dEye_modind_t100'] = fmdark_comp_dEye_left_modind[1]
+            sacc.movement_psth(
+                ax=fig_fmdark_comp_dEye,
+                row=row,
+                rightsacc='FmDk_rightsacc_avg_comp_dEye',
+                leftsacc='FmDk_leftsacc_avg_comp_dEye',
+                title='FmDk comp dEye'
+            )
+
 
             # fm dark gaze shift dHead psth
-            sacc.movement_psth(ax=fig_fmdark_gaze_dHead,
-                                    rightsacc='FmDk_rightsacc_avg_gaze_shift_dHead',
-                                    leftsacc='FmDk_leftsacc_avg_gaze_shift_dHead',
-                                    title='FmDk gaze shift dHead')
-            data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dHead_modind_t0'] = fmdark_gaze_dHead_right_modind[0]
-            data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dHead_modind_t0'] = fmdark_gaze_dHead_left_modind[0]
-            data.at[ind, 'FmDk_rightsacc_avg_gaze_shift_dHead_modind_t100'] = fmdark_gaze_dHead_right_modind[1]
-            data.at[ind, 'FmDk_leftsacc_avg_gaze_shift_dHead_modind_t100'] = fmdark_gaze_dHead_left_modind[1]
-            
+            sacc.movement_psth(
+                ax=fig_fmdark_gaze_dHead,
+                row=row,
+                rightsacc='FmDk_rightsacc_avg_gaze_shift_dHead',
+                leftsacc='FmDk_leftsacc_avg_gaze_shift_dHead',
+                title='FmDk gaze shift dHead',
+            )
+
             # fm dark comp dHead psth
-            sacc.movement_psth(ax=fig_fmdark_comp_dHead,
-                                    rightsacc='FmDk_rightsacc_avg_comp_dHead',
-                                    leftsacc='FmDk_leftsacc_avg_comp_dHead',
-                                    title='FmDk comp dHead')
-            data.at[ind, 'FmDk_rightsacc_avg_comp_dHead_modind_t0'] = fmdark_comp_dHead_right_modind[0]
-            data.at[ind, 'FmDk_leftsacc_avg_comp_dHead_modind_t0'] = fmdark_comp_dHead_left_modind[0]
-            data.at[ind, 'FmDk_rightsacc_avg_comp_dHead_modind_t100'] = fmdark_comp_dHead_right_modind[1]
-            data.at[ind, 'FmDk_leftsacc_avg_comp_dHead_modind_t100'] = fmdark_comp_dHead_left_modind[1]
+            sacc.movement_psth(
+                ax=fig_fmdark_comp_dHead,
+                row=row,
+                rightsacc='FmDk_rightsacc_avg_comp_dHead',
+                leftsacc='FmDk_leftsacc_avg_comp_dHead',
+                title='FmDk comp dHead',
+            )
 
             # fm dark all dEye psth
-            sacc.movement_psth(ax=fig_fmdark_all_dEye,
-                                    rightsacc='FmDk_rightsacc_avg',
-                                    leftsacc='FmDk_leftsacc_avg',
-                                    title='FmDk all dEye')
-            data.at[ind, 'FmDk_rightsacc_modind_t0'] = fmdark_all_dEye_right_modind[0]
-            data.at[ind, 'FmDk_leftsacc_modind_t0'] = fmdark_all_dEye_left_modind[0]
-            data.at[ind, 'FmDk_rightsacc_modind_t100'] = fmdark_all_dEye_right_modind[1]
-            data.at[ind, 'FmDk_leftsacc_modind_t100'] = fmdark_all_dEye_left_modind[1]
+            sacc.movement_psth(
+                ax=fig_fmdark_all_dEye,
+                row=row,
+                rightsacc='FmDk_rightsacc_avg',
+                leftsacc='FmDk_leftsacc_avg',
+                title='FmDk all dEye',
+            )
 
             # fm dark pupil radius tuning
-            fmdark_pupilradius_modind = sacc.tuning_curve(ax=fig_fmdark_pupilradius_tuning,
-                                                          row=row,
-                                    varcent_name='FmDk_pupilradius_tuning_bins',
-                                    tuning_name='FmDk_pupilradius_tuning',
-                                    err_name='FmDk_pupilradius_tuning_err',
-                                    title='FmDk pupil radius',
-                                    xlabel='pxls')
+            fmdark_pupilradius_modind = sacc.tuning_curve(
+                ax=fig_fmdark_pupilradius_tuning,
+                row=row,
+                varcent_name='FmDk_pupilradius_tuning_bins',
+                tuning_name='FmDk_pupilradius_tuning',
+                err_name='FmDk_pupilradius_tuning_err',
+                title='FmDk pupil radius',
+                xlabel='pxls')
             data.at[ind, 'FmDk_pupilradius_modind'] = fmdark_pupilradius_modind
 
             # fm dark theta tuning
-            fmdark_theta_modind = sacc.tuning_curve(ax=fig_fmdark_theta_tuning,
-                                                    row=row,
-                                    varcent_name='FmDk_theta_tuning_bins',
-                                    tuning_name='FmDk_theta_tuning',
-                                    err_name='FmDk_theta_tuning_err',
-                                    title='FmDk theta',
-                                    xlabel='deg')
+            fmdark_theta_modind = sacc.tuning_curve(
+                ax=fig_fmdark_theta_tuning,
+                row=row,
+                varcent_name='FmDk_theta_tuning_bins',
+                tuning_name='FmDk_theta_tuning',
+                err_name='FmDk_theta_tuning_err',
+                title='FmDk theta',
+                xlabel='deg'
+            )
             data.at[ind, 'FmDk_theta_modind'] = fmdark_theta_modind
 
             # fm dark phi tuning
-            fmdark_phi_modind = sacc.tuning_curve(ax=fig_fmdark_phi_tuning,
-                                                  row=row,
-                                    varcent_name='FmDk_phi_tuning_bins',
-                                    tuning_name='FmDk_phi_tuning',
-                                    err_name='FmDk_phi_tuning_err',
-                                    title='FmDk phi',
-                                    xlabel='deg')
+            fmdark_phi_modind = sacc.tuning_curve(
+                ax=fig_fmdark_phi_tuning,
+                row=row,
+                varcent_name='FmDk_phi_tuning_bins',
+                tuning_name='FmDk_phi_tuning',
+                err_name='FmDk_phi_tuning_err',
+                title='FmDk phi',
+                xlabel='deg'
+            )
             data.at[ind, 'FmDk_phi_modind'] = fmdark_phi_modind
 
             # fm dark roll tuning
-            fmdark_roll_modind = sacc.tuning_curve(ax=fig_fmdark_roll_tuning,
-                                                   row=row,
-                                    varcent_name='FmDk_roll_tuning_bins',
-                                    tuning_name='FmDk_roll_tuning',
-                                    err_name='FmDk_roll_tuning_err',
-                                    title='FmDk roll',
-                                    xlabel='deg')
+            fmdark_roll_modind = sacc.tuning_curve(
+                ax=fig_fmdark_roll_tuning,
+                row=row,
+                varcent_name='FmDk_roll_tuning_bins',
+                tuning_name='FmDk_roll_tuning',
+                err_name='FmDk_roll_tuning_err',
+                title='FmDk roll',
+                xlabel='deg'
+            )
             data.at[ind, 'FmDk_roll_modind'] = fmdark_roll_modind
             
             # fm dark pitch tuning
-            fmdark_pitch_modind = sacc.tuning_curve(ax=fig_fmdark_pitch_tuning,
-                                                    row=row,
-                                    varcent_name='FmDk_pitch_tuning_bins',
-                                    tuning_name='FmDk_pitch_tuning',
-                                    err_name='FmDk_pitch_tuning_err',
-                                    title='FmDk pitch',
-                                    xlabel='deg')
+            fmdark_pitch_modind = sacc.tuning_curve(
+                ax=fig_fmdark_pitch_tuning,
+                row=row,
+                varcent_name='FmDk_pitch_tuning_bins',
+                tuning_name='FmDk_pitch_tuning',
+                err_name='FmDk_pitch_tuning_err',
+                title='FmDk pitch',
+                xlabel='deg'
+            )
             data.at[ind, 'FmDk_pitch_modind'] = fmdark_pitch_modind
 
         plt.tight_layout()
@@ -549,3 +560,5 @@ def summarize_units(data_filepath, use_pop_outputs=False):
     
     print('saving unit summary pdf')
     pdf.close()
+
+
