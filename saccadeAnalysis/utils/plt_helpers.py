@@ -76,7 +76,7 @@ def jitter(c, sz, maxdist=0.2):
 
     """
 
-    j_x = np.zeros(sz) + np.random.uniform(c-maxdist, c+maxdist, sz)
+    j_x = np.ones(sz) + np.random.uniform(c-maxdist, c+maxdist, sz)
 
     return j_x
 
