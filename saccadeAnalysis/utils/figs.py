@@ -105,7 +105,7 @@ def plot_columns(ax, df, prop, cat=None, cats=None,
 
         x_jitter = sacc.jitter(c_i, np.size(cdata,0))
 
-        ax.plot(x_jitter-1, cdata,
+        ax.plot(x_jitter, cdata,
                 '.', color=colors[c], markersize=2)
         
         # Either use median or mean of the data
