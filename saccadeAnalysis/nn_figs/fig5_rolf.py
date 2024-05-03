@@ -13,12 +13,12 @@ import fmEphys as fme
 import saccadeAnalysis as sacc
 
 
-def fig5(hffm, savepath):
+def fig5_rolf(hffm, savepath):
     
     sacc.set_plt_params()
-    props = sacc.prop_dict()
-    grat_bins = props['psth_bins_long']
-    colors = props['colors']    
+    
+    #grat_bins = props['psth_bins_long']
+    colors = ['black','blue','red','green']   
 
     hffm['raw_mod_for_Gt'] = np.nan
     hffm['norm_mod_for_Gt'] = np.nan
@@ -156,9 +156,9 @@ def fig5(hffm, savepath):
         movtype = movtypes[count]
         thisclust = hffm['Gt_kde_psth_norm'][hffm['gazecluster']==movtype][hffm['Gt_responsive']==True]
         for i, psth in enumerate(thisclust):
-            panel.plot(grat_bins, psth, '-', linewidth=1, alpha=0.2)
+            panel.plot(psth, '-', linewidth=1, alpha=0.2)
         clustmean = np.nanmean(fme.flatten_series(thisclust),0)
-        panel.plot(grat_bins, clustmean, '-', linewidth=2, color=colors[movtype])
+        panel.plot( clustmean, '-', linewidth=2, color=colors[movtype])
         
         panel.vlines(0,-1.5,1.5, color='k',linestyle='dashed',linewidth=1)
         panel.set_ylim([-0.5,1.2])
@@ -191,8 +191,8 @@ def fig5(hffm, savepath):
         clustmean = np.nanmean(cluster_psths, 0)
         clusterr = np.std(cluster_psths, 0) / np.sqrt(np.size(cluster_psths,0))
         
-        ax.plot(grat_bins, clustmean, '-', linewidth=1.5, color=colors[name])
-        ax.fill_between(grat_bins, clustmean-clusterr, clustmean+clusterr,
+        ax.plot(clustmean, '-', linewidth=1.5, color=colors[name])
+        ax.fill_between(clustmean-clusterr, clustmean+clusterr,
                         color=colors[name], alpha=0.2)
     
     ax.set_ylabel('norm sp/s'); ax.set_xlabel('time (ms)')
