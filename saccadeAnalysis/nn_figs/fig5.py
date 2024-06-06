@@ -14,7 +14,7 @@ import saccadeAnalysis as sacc
 
 
 def fig5(hffm, savepath):
-
+    
     sacc.set_plt_params()
     props = sacc.prop_dict()
     grat_bins = props['psth_bins_long']
