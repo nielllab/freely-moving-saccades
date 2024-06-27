@@ -103,7 +103,7 @@ def plot_columns(ax, df, prop, cat=None, cats=None,
 
         cdata = df[prop][df[cat]==c]
 
-        x_jitter = sacc.jitter(c_i, np.size(cdata,0))
+        x_jitter = sacc.jitter(c_i+1, np.size(cdata,0))
 
         ax.plot(x_jitter, cdata,
                 '.', color=colors[c], markersize=2)
